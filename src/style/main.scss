@@ -12,6 +12,10 @@
 }
 
 
+$otherColor :#726382;
+$primaryColor : #00ACD6;
+$secondaryColor : #E6C49F; 
+
 
 @font-face {
     font-family: openSansExtrabold;
@@ -28,7 +32,10 @@
 
 body {
     max-width: 100%;
+    position: relative;
+    font-size: 16px;
 }
+
 
 a {
     color : black;
@@ -47,13 +54,24 @@ h1{
 
 h2{
     font-family: 'oxygenRegular', 'Courier New', Courier, monospace;
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     text-transform: uppercase;
 }
 
 h3{
     font-family: 'oxygenRegular', 'Courier New', Courier, monospace;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
 
+}
+
+main{
+    display : flex;
+    flex-direction: column;
+    position: fixed;
+    top: 85px;
+    bottom: 50px;
+    overflow: auto;
+    padding: 0 3vw;
+    width: 95%;
 }

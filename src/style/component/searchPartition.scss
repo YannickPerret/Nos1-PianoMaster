@@ -1,0 +1,24 @@
+.searchSheet{
+    display: flex;
+    justify-content: center;
+    margin-top: 3vh;
+    width: 100%;
+
+    & form {
+        display : flex;
+        flex-direction: row;
+        width: 80%;
+
+        & input {
+            flex: 3;
+            border-right: none;
+        }
+        & button {
+            border-left: none;
+        }
+
+        & input, & button {
+            border-radius: 5%;
+        }
+    }
+}

@@ -1,0 +1,24 @@
+.navigation__mobile{
+    display : flex;
+    flex-direction: row;
+    position : fixed;
+    bottom : 0;
+    left : 0;
+    right: 0;
+    background: $primaryColor;
+    height: 50px;
+    width: 100%;
+
+    &__list{
+        display : flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        width: 100%;
+        list-style-type: none;
+         
+        &__link{
+            flex-basis: 1;
+        }
+    }
+}
