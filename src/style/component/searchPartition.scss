@@ -1,10 +1,18 @@
 .searchSheet{
     display: flex;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     margin-top: 3vh;
+    position: relative;
     width: 100%;
+    gap :10px;
 
-    & form {
+    @include title;
+    &__title{
+        width: 100%;
+    }
+
+    &__barInput {
         display : flex;
         flex-direction: row;
         width: 80%;
@@ -21,4 +29,20 @@
             border-radius: 5%;
         }
     }
+
+    &__result{
+        display : flex;
+        flex-direction: column;
+        position: absolute;
+        z-index: 10;
+        top : 100%;
+        width: 80%;
+        border: 1px solid #000;
+
+        & >.card{
+            border-radius: 0;
+        }
+        
+    }
+
 }

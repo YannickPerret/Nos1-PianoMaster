@@ -1,7 +1,15 @@
 @import "main";
 
+
 @import 'component/header.scss';
 @import 'component/menu.scss';
 @import 'component/currentPartition';
 @import 'component/searchPartition';
 @import 'component/newSheetCommunity';
+@import 'component/sheetCards';
+@import 'component/piano';
+
+@import 'pages/musicComposer';
+@import 'pages/musicSheet';
+@import 'pages/search';
+@import 'pages/user';

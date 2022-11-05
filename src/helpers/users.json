@@ -1,0 +1,11 @@
+[
+    {
+        "id":1,
+        "username": "yannick",
+        "avatarLocation": "yannick.png",
+        "date": "20.06.2020",
+        "likes" : 23,
+        "comments" : 30,
+        "totalViews" : 200
+    }
+]

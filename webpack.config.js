@@ -13,9 +13,10 @@ let config = {
     entry: './src/main.js',
 
     output:{
-        filename : 'js/main.js',
-		path: path.resolve(__dirname, './public'),
+        path: path.resolve(__dirname, 'dist'),
+        filename : './src/[name].js',
         assetModuleFilename: 'images/[name][ext]',
+        publicPath: "/",
     },
     resolve: {
 		extensions: ['.js', '.jsx', '.png', '.jpg', '.mp4', '.gif'],
@@ -77,7 +78,7 @@ module.exports = (env, args) =>{
     config.mode = args.mode
 
     if (args.mode === 'development'){
-        config.devtool = 'inline-source-map',
+        config.devtool = 'source-map',
 
         config.devServer ={
             static:{
@@ -87,9 +88,10 @@ module.exports = (env, args) =>{
                 logging: 'warn',
                 overlay : true
             },
-            historyApiFallback : true,
             compress : true,
             port: 8080,
+            historyApiFallback: true,
+
         },
         config.plugins.push(
             new BundleAnalyzerPlugin({

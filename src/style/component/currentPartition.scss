@@ -5,6 +5,8 @@
     margin : 4vh 0;
     gap: 15px;
 
+    @include title;
+
     & > table {
         border-collapse: collapse;
         width: 100%;

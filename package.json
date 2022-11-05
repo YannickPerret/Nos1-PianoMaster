@@ -37,6 +37,9 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.17.12",
-    "react-router-dom": "^6.4.2"
+    "react-pdf": "^5.7.2",
+    "react-read-pdf": "^2.0.9",
+    "react-router-dom": "^6.4.2",
+    "vexflow": "^4.0.3"
   }
 }

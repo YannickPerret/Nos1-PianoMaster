@@ -7,12 +7,14 @@ import Menu from '../component/layout/menu';
 import dataSheet from '../helpers/sheets.json';
 
 const Home = () => {
+    const userId = 1; //defaut user
+
     return (
         <>
             <Header />
             <main>
                 <SearchPartition />
-                <CurrentPartition />
+                <CurrentPartition userId={userId}/>
                 <NewSheetsCommunity data={dataSheet} />
             </main>
             <Menu />

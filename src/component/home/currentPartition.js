@@ -1,6 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import dataSheetUser from '../../helpers/personnalSheet.json';
+import dataSheet from '../../helpers/sheets.json';
 
-const CurrentPartition = () => {
+const CurrentPartition = (props) => {
     return (
         <div className="currentProgress">
         <h2 className="currentProgress__title">Suivis de partitions</h2>
@@ -14,18 +17,17 @@ const CurrentPartition = () => {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th>Rivers flow in you</th><th>50%</th><th><a href="#">Consulter</a></th>
-                </tr>
-                <tr>
-                    <th>Arabesque N°2</th><th>20%</th><th><a href="#">Consulter</a></th>
-                </tr>
-                <tr>
-                    <th>Pirate des Caraïbes</th><th>78%</th><th><a href="#">Consulter</a></th>
-                </tr>
-                <tr>
-                    <th>La valse d'Amélie</th><th>98%</th><th><a href="#">Consulter</a></th>
-                </tr>
+                {dataSheetUser.map(element => {
+                    if (element.userId === props.userId)
+                        return element.sheet.map(sheetUser => {
+                            return dataSheet.map(sheet => {
+                                if(sheet.id === sheetUser.sheetId){
+                                    return <tr key={sheetUser.id}><th>{sheet.title}</th><th>{sheetUser.purcent}%</th><th><Link to={'musicSheet/'+sheetUser.sheetId}>Consulter</Link></th></tr>
+
+                                }
+                            })
+                    })
+                })}
             </tbody>
         </table>
     </div>

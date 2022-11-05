@@ -1,0 +1,61 @@
+.user{
+    display: flex;
+    flex-direction: column;
+    gap : 30px;
+
+    @include title;
+
+
+    &__header{
+        display : flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        justify-content: space-between;
+        gap : 15px;
+
+        &__username{
+            text-decoration: underline;
+        }
+
+    }
+
+    &__statistique {
+        display : flex;
+        flex-direction: column;
+        width: 100%;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        gap : 30px;
+
+        & h3{
+            text-align: center;
+        }
+
+        &__list{
+            display : flex;
+            flex-direction: row;
+            width: 100%;
+
+            &__items{
+                display : flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                flex :1;
+            }
+        }
+    }
+
+    &__sheetList{
+        display : flex;
+        flex-direction: column;
+        gap : 15px;
+
+        &__list{
+            display : flex;
+            flex-direction: column;
+            gap : 15px;
+        }
+    }
+}

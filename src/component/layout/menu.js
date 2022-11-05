@@ -1,28 +1,29 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Menu = () => {
     return (
         <nav className="navigation__mobile">
             <ul className="navigation__mobile__list">
                 <li className="navigation__mobile__list__link">
-                    <a href="/">
-                        <img src="./images/home.svg" width="25" height="auto" />
-                    </a>
+                    <Link to="/">
+                        <img src="../images/home.svg" width="25" height="auto" />
+                    </Link>
                 </li>
                 <li className="navigation__mobile__list__link">
-                    <a href="/users/partition.html">
-                        <img src="./images/listPartition.svg" width="25" height="auto" />
-                    </a>
+                    <Link to="/musicSheetList">
+                        <img src="../images/piano.png" width="25" height="auto" />
+                    </Link>
                 </li>
                 <li className="navigation__mobile__list__link">
-                    <a href="/search.html">
-                        <img src="./images/search.svg" width="25" height="auto" />
-                    </a>
+                    <Link to="/search">
+                        <img src="../images/search.svg" width="25" height="auto" />
+                    </Link>
                 </li>
                 <li className="navigation__mobile__list__link">
-                    <a href="/user/index.html">
-                        <img src="./images/utilisateur.svg" width="25" height="auto" />
-                    </a>
+                    <Link to="/users/1">
+                        <img src="../images/utilisateur.svg" width="25" height="auto" />
+                    </Link>
                 </li>
             </ul>
         </nav>

@@ -1,65 +1,58 @@
 [
     {
+        "id" : 1,
+        "title": "Rivers flow in you",
+        "autor": "Yurima",
+        "genre" : "Chanson Française",
+        "date" : "10/10/2022",
+        "note" : 3.5
+    },
+    {
+        "id" : 2,
         "title": "La valse d'amélie",
         "autor": "Yannick",
-        "genre" : "Chanson Françise",
+        "genre" : "Chanson Française",
         "date" : "10/10/2022",
         "note" : 5
     },
     {
+        "id" : 3,
+        "title": "Pirate des Caraïbes",
+        "autor": "Hans Zimmer",
+        "genre" : "Chanson Française",
+        "date" : "10/10/2022",
+        "note" : 2
+    },
+    {
+        "id" : 4,
+        "title": "Arabesque N°1",
+        "autor": "Debussy",
+        "genre" : "Chanson Française",
+        "date" : "10/10/2022",
+        "note" : 5
+    },
+    {
+        "id" : 5,
         "title": "Le roi lion",
         "autor": "Yannick",
-        "genre" : "Chanson Françise",
+        "genre" : "Chanson Française",
         "date" : "10/10/2022",
-        "note" : 5
+        "note" : 4.5
     },
     {
+        "id" : 6,
         "title": "Piano Novel",
         "autor": "Yannick",
-        "genre" : "Chanson Françise",
+        "genre" : "Chanson Française",
         "date" : "10/10/2022",
-        "note" : 5
+        "note" : 3
     },
     {
+        "id" : 7,
         "title": "The blues song",
         "autor": "Yannick",
-        "genre" : "Chanson Françise",
+        "genre" : "Chanson Française",
         "date" : "10/10/2022",
-        "note" : 5
-    },
-    {
-        "title": "Un autre titre à découvrir",
-        "autor": "Yannick",
-        "genre" : "Chanson Françise",
-        "date" : "10/10/2022",
-        "note" : 5
-    },
-    {
-        "title": "La valse d'amélie",
-        "autor": "Yannick",
-        "genre" : "Chanson Françise",
-        "date" : "10/10/2022",
-        "note" : 5
-    },
-    {
-        "title": "La valse d'amélie",
-        "autor": "Yannick",
-        "genre" : "Chanson Françise",
-        "date" : "10/10/2022",
-        "note" : 5
-    },
-    {
-        "title": "La valse d'amélie",
-        "autor": "Yannick",
-        "genre" : "Chanson Françise",
-        "date" : "10/10/2022",
-        "note" : 5
-    },
-    {
-        "title": "La valse d'amélie",
-        "autor": "Yannick",
-        "genre" : "Chanson Françise",
-        "date" : "10/10/2022",
-        "note" : 5
+        "note" : 1
     }
 ]

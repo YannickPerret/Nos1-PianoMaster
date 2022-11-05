@@ -1,0 +1,59 @@
+.musicSheet {
+    display : flex;
+    flex-direction: column;
+    gap : 15px;
+    
+    &__header{
+        display : flex;
+        flex-flow: column nowrap;
+        justify-content: space-around;
+        height: 15%;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 3.95px 4.6px;
+        background :rgb(247, 246, 246);
+        border-radius: 15px;
+
+        & h1{
+            font-size: 22px;
+            text-align: center;
+        }
+        
+        &__info {
+            display : flex;
+            flex-flow: row nowrap;
+            justify-content: space-around;
+            align-items: center;
+            list-style-type: none;
+            font-size: 14px;
+            padding : 0 2vw;
+        }
+    }
+
+    &__body {
+        display : flex;
+        height: 85%;
+        width: 100%;
+        position: relative;
+
+        & object, & canvas{
+            width: 100% !important;
+            height: 100% !important;
+
+        }
+        .pdfViewer{
+            display : flex;
+            flex-direction: column;
+            width: 100% !important;
+            overflow-x: scroll;
+        }
+
+        & audio {
+            display : block;
+            position: fixed;
+            margin : 0 auto;
+            bottom : 7%;
+            left : 0;
+            width: 55%;
+            z-index: 2;
+        }
+    }
+}

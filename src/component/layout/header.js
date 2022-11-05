@@ -1,13 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     return (
         <header>
             <div>
-                <img src="./images/logo_masterPiano_sans-text.png" width="100" height="auto" />
+                <Link to={'/'}><img src="../images/logo_masterPiano_sans-text.png" width="100" height="auto" /></Link>
             </div>
             <div>
-                <a href="/">PIANO MASTER</a>
+                <Link to={'/'}>PIANO MASTER</Link>
             </div>
         </header>
     );
