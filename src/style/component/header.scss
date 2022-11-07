@@ -11,4 +11,8 @@ header{
     right: 0;
     width: 100%;
     padding : 0 4vw;
+
+    & .websiteName{
+        font-size: 20px;
+    }
 }

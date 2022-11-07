@@ -30,6 +30,11 @@ $secondaryColor : #E6C49F;
     src: url(./font/Roboto-Regular.ttf);
   }
 
+  @font-face{
+    font-family: chopinScript;
+    src: url(./font/ChopinScript.ttf);
+  }
+
 body {
     max-width: 100%;
     position: relative;
@@ -49,7 +54,6 @@ p{
 h1{
     font-size: 2rem;
     font-family: 'openSansExtrabold', 'Courier New', Courier, monospace;
-    font-weight: 1000;
 }
 
 h2{

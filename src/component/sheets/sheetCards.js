@@ -8,7 +8,7 @@ const SheetCards = (props) => {
                 <li>Note : {props.sheetCard.note}/5</li>
                 <li>Auteur : {props.sheetCard.autor}</li>
                 <li>Genre : {props.sheetCard.genre}</li>
-                <li>Date : {props.sheetCard.date}</li>
+                <li>Parution le {props.sheetCard.date}</li>
             </ul>
         </div>
     );

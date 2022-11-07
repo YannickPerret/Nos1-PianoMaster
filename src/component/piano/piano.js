@@ -15,6 +15,7 @@ const Piano = (props) => {
     // this function will play audio
     const playMusic = (_key) =>{
         const audio=document.getElementById(_key);
+        console.log(audio)
         if(audio && audioActivated){
             audio.currentTime=0;
             audio.play();
@@ -34,11 +35,11 @@ const Piano = (props) => {
                 <li className="white c" onClick={(e => setParentKeyDown("e/4"))}></li>
 
                 <li className="white b" onClick={(e => setParentKeyDown("f/4"))}></li>
-                <li className="black as" onClick={(e => setParentKeyDown("f/4#"))}></li>
+                <li className="black as" onClick={(e => setParentKeyDown("f#/4"))}></li>
                 <li className="white a" onClick={(e => setParentKeyDown("g/4"))}></li>
-                <li className="black gs" onClick={(e => setParentKeyDown("g/4#"))}></li>
+                <li className="black gs" onClick={(e => setParentKeyDown("g#/4"))}></li>
                 <li className="white g" onClick={(e => setParentKeyDown("a/4"))}></li>
-                <li className="black fs" onClick={(e => setParentKeyDown("a/4#"))}></li>
+                <li className="black fs" onClick={(e => setParentKeyDown("a#/4"))}></li>
                 <li className="white f" onClick={(e => setParentKeyDown("b/4"))}></li>
 
                 {window.innerWidth > 390 ?
@@ -63,16 +64,16 @@ const Piano = (props) => {
 
                 
                 <audio id="c/4" src="../sounds/piano/c4.mp3"></audio>
-                <audio id="c#/4" src="../sounds/piano/c#4.mp3"></audio>
+                <audio id="c#/4" src="../sounds/piano/c4D.mp3"></audio>
                 <audio id="d/4" src="../sounds/piano/d4.mp3"></audio>
-                <audio id="d#/4" src="../sounds/piano/d#4.mp3"></audio>
+                <audio id="d#/4" src="../sounds/piano/d4D.mp3"></audio>
                 <audio id="e/4" src="../sounds/piano/e4.mp3"></audio>
                 <audio id="f/4" src="../sounds/piano/f4.mp3"></audio>
-                <audio id="f/4#" src="../sounds/piano/f#4.mp3"></audio>
+                <audio id="f#/4" src="../sounds/piano/f4D.mp3"></audio>
                 <audio id="g/4" src="../sounds/piano/g4.mp3"></audio>
-                <audio id="g/4#" src="../sounds/piano/g#4.mp3"></audio>
+                <audio id="g#/4" src="../sounds/piano/g4D.mp3"></audio>
                 <audio id="a/4" src="../sounds/piano/a4.mp3"></audio>
-                <audio id="a/4#" src="../sounds/piano/a#4.mp3"></audio>
+                <audio id="a#/4" src="../sounds/piano/a4D.mp3"></audio>
                 <audio id="b/4" src="../sounds/piano/b4.mp3"></audio>
         </>
  

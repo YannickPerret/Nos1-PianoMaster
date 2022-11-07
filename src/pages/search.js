@@ -14,6 +14,9 @@ const Search = () => {
                     <h2 className='search__title'>Rechercher une partition</h2>
                     <input type={'text'} value={query} placeholder="Chercher un artiste, titre de musique,..." onChange={(e => setQuery(e.target.value))} />
                     <div className='search__body'>
+                        <h3>
+                            Résultats de la recherche
+                        </h3>
                     {query ?
                         dataSheet.filter(post => {
                             if (query === '') {

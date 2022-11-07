@@ -7,7 +7,6 @@ import dataSheet from '../helpers/sheets.json';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import MusicAudio from '../component/sheets/musicAudio';
 
-//https://github.com/forthealllight/react-read-pdf
 const MusicSheet = () => {
 
     let idSheet =  useMatch('musicSheet/:idSheet').params.idSheet;

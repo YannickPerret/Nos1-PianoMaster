@@ -7,7 +7,7 @@ const Header = () => {
             <div>
                 <Link to={'/'}><img src="../images/logo_masterPiano_sans-text.png" width="100" height="auto" /></Link>
             </div>
-            <div>
+            <div className='websiteName'>
                 <Link to={'/'}>PIANO MASTER</Link>
             </div>
         </header>

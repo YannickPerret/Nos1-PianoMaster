@@ -7,7 +7,6 @@ import Piano from '../component/piano/piano';
 const MusicComposer = () => {
     const [titleCompose, setTitleCompose] = useState ('Titre par défaut')
 
-    //modifier pour créer par 4 notes
     const [notes, setNotes] = useState([]);
 
     const staveWidth = 180
