@@ -35,23 +35,23 @@
         "id" : 5,
         "title": "Le roi lion",
         "autor": "Yannick",
-        "genre" : "Chanson Française",
+        "genre" : "Disney",
         "date" : "10/10/2022",
         "note" : 4.5
     },
     {
         "id" : 6,
-        "title": "Piano Novel",
+        "title": "Everlasting Summer",
         "autor": "Yannick",
-        "genre" : "Chanson Française",
+        "genre" : "Soundtrack",
         "date" : "10/10/2022",
         "note" : 3
     },
     {
         "id" : 7,
-        "title": "The blues song",
-        "autor": "Yannick",
-        "genre" : "Chanson Française",
+        "title": "Faded",
+        "autor": "Alain Walker",
+        "genre" : "Electronic",
         "date" : "10/10/2022",
         "note" : 1
     }

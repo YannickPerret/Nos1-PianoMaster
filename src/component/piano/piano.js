@@ -1,15 +1,30 @@
 import React, { useEffect, useState } from 'react';
 
 const Piano = (props) => {
+    const [audioActivated, setAudioActivated] = useState(true);
 
     const setParentKeyDown = (_key) => {
-        if(_key)
+        if(_key){
+
+            playMusic(_key)
             return props.onWrite(_key)
+        }
         return null
     }
     
+    // this function will play audio
+    const playMusic = (_key) =>{
+        const audio=document.getElementById(_key);
+        if(audio && audioActivated){
+            audio.currentTime=0;
+            audio.play();
+        }
+    }
+
     return (
-            <ul className="set">
+        <>
+            <label>Son du piano</label> <input type="checkbox" checked={audioActivated} onChange={(e => setAudioActivated(e.target.checked))} />
+                <ul className="set">
                 {// c = do, d = RÉ, e = MI, f = FA, g = SOL, a = LA , b = SI
                 } 
                 <li className="white e" onClick={(e => setParentKeyDown("c/4"))}></li>
@@ -45,6 +60,22 @@ const Piano = (props) => {
 
                 :null}
             </ul>
+
+                
+                <audio id="c/4" src="../sounds/piano/c4.mp3"></audio>
+                <audio id="c#/4" src="../sounds/piano/c#4.mp3"></audio>
+                <audio id="d/4" src="../sounds/piano/d4.mp3"></audio>
+                <audio id="d#/4" src="../sounds/piano/d#4.mp3"></audio>
+                <audio id="e/4" src="../sounds/piano/e4.mp3"></audio>
+                <audio id="f/4" src="../sounds/piano/f4.mp3"></audio>
+                <audio id="f/4#" src="../sounds/piano/f#4.mp3"></audio>
+                <audio id="g/4" src="../sounds/piano/g4.mp3"></audio>
+                <audio id="g/4#" src="../sounds/piano/g#4.mp3"></audio>
+                <audio id="a/4" src="../sounds/piano/a4.mp3"></audio>
+                <audio id="a/4#" src="../sounds/piano/a#4.mp3"></audio>
+                <audio id="b/4" src="../sounds/piano/b4.mp3"></audio>
+        </>
+ 
     );
 };
 

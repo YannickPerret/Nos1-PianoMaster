@@ -7,5 +7,14 @@
         "likes" : 23,
         "comments" : 30,
         "totalViews" : 200
+    },
+    {
+        "id":2,
+        "username": "John",
+        "avatarLocation": "john.webp",
+        "date": "25.06.2029",
+        "likes" : 50,
+        "comments" : 80,
+        "totalViews" : 500
     }
 ]

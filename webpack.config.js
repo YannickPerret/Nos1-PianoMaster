@@ -5,7 +5,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
-let titlePage = 'Webpack - Starter Kit'
+let titlePage = 'Piano Master - Stocker, découvrez et jouez de la musique facilement !'
 
 
 let config = {
