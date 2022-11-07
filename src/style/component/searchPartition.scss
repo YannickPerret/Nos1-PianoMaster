@@ -41,7 +41,17 @@
 
         & >.card{
             border-radius: 0;
+
+            & > .card__discover{
+                display : none !important;
+            }
+            & > .card__container{
+                height: 100%;
+            }
+
+            
         }
+
         
     }
 

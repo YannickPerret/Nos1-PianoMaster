@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import SearchCards from '../search/searchCards';
 import dataSheet from '../../helpers/sheets.json';
 
+
 const SearchPartition = () => {
+
     const [query, setQuery] = useState("");
     return (
         <div className="searchSheet">
