@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Piano } from '../../helpers/piano';
 
-const Piano = (props) => {
+const PianoMaster = (props) => {
     const [audioActivated, setAudioActivated] = useState(true);
+
+
 
     const setParentKeyDown = (_key) => {
         if(_key){
@@ -28,7 +31,7 @@ const Piano = (props) => {
                 <ul className="set">
                 {// c = do, d = RÉ, e = MI, f = FA, g = SOL, a = LA , b = SI
                 } 
-                <li className="white e" onClick={(e => setParentKeyDown("c/4"))}></li>
+                <li className="white e" onClick={(e => [Piano.play("c/4", audioActivated), props.onWrite("c/4")])}></li>
                 <li className="black ds" onClick={(e => setParentKeyDown("c#/4"))}></li>
                 <li className="white d" onClick={(e => setParentKeyDown("d/4"))}></li>
                 <li className="black cs" onClick={(e => setParentKeyDown("d#/4"))}></li>
@@ -80,4 +83,4 @@ const Piano = (props) => {
     );
 };
 
-export default Piano;
+export default PianoMaster;

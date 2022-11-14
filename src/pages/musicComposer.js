@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from '../component/layout/header';
 import Menu from '../component/layout/menu';
 import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow";
-import Piano from '../component/piano/piano';
+import PianoKeyboard from '../component/piano/piano';
 
 const MusicComposer = () => {
     const [titleCompose, setTitleCompose] = useState ('Titre par défaut')
@@ -83,7 +83,7 @@ const MusicComposer = () => {
 
                 </div>
                 <div className="musicComposer_piano">
-                    <Piano onWrite={writeMusic} />
+                    <PianoKeyboard onWrite={writeMusic} />
                 </div>
             </main>
         <Menu />
