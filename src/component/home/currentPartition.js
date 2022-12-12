@@ -19,14 +19,19 @@ const CurrentPartition = (props) => {
             <tbody>
                 {dataSheetUser.map(element => {
                     if (element.userId === props.userId)
+                    {
                         return element.sheet.map(sheetUser => {
                             return dataSheet.map(sheet => {
                                 if(sheet.id === sheetUser.sheetId){
-                                    return <tr key={sheetUser.id}><th>{sheet.title}</th><th>{sheetUser.purcent}%</th><th><Link to={'musicSheet/'+sheetUser.sheetId}>Consulter</Link></th></tr>
-
+                                    return  <tr key={sheetUser.id}>
+                                                <th>{sheet.title}</th>
+                                                <th>{sheetUser.purcent}%</th>
+                                                <th><Link to={'musicSheet/'+sheetUser.sheetId}>Consulter</Link></th>
+                                            </tr>
                                 }
                             })
-                    })
+                        })
+                    }   
                 })}
             </tbody>
         </table>

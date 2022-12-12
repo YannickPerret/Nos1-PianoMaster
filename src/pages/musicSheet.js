@@ -12,7 +12,6 @@ const MusicSheet = () => {
     let idSheet =  useMatch('musicSheet/:idSheet').params.idSheet;
     const [sheet, setSheet] = useState({});
     const [currentPageNumber, setcurrentPageNumber] = useState(1);
-    const [isLoading, setIsloading] = useState(false);
     const [audioActivated, setAudioActivated] = useState(true)
 
     const options = {
@@ -62,9 +61,8 @@ const MusicSheet = () => {
                         <p>It appears you don't have Adobe Reader or PDF support in this web browser</p>
                     </object> 
                     : 
-                    <Document className={'pdfViewer'} file={'../dist/sheets/'+sheet.sheetLocationName} onLoadSuccess={(e => [setcurrentPageNumber(e.numPages), setIsloading(false)])} options={options}> 
-                    {!isLoading &&
-                        Array.from(new Array(currentPageNumber), (el, index) => (
+                    <Document className={'pdfViewer'} file={'../dist/sheets/'+sheet.sheetLocationName} onLoadSuccess={(e => setcurrentPageNumber(e.numPages))} options={options}> 
+                        {Array.from(new Array(currentPageNumber), (el, index) => (
                             <Page key={`page_${index + 1}`} pageNumber={index + 1} />
                         ))}
                     </Document>}

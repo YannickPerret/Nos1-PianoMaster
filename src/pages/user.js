@@ -14,8 +14,6 @@ const User = () => {
 
     let match = useMatch("users/:id") ? useMatch("users/:id").params.id : null;
 
-    const navigation = useNavigate();
-
     const getUserById = (_userId) =>{
         let userTemps = false
 
