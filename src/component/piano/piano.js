@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Piano } from '../../helpers/piano';
+import MusicAudio from '../sheets/musicAudio';
 
 const PianoMaster = (props) => {
     const [audioActivated, setAudioActivated] = useState(true);
@@ -25,27 +26,23 @@ const PianoMaster = (props) => {
                 let temp = document.createElement('li')
                 temp.className = element[0];
                 temp.addEventListener('click', () =>{
-                    [Piano.play(element[1], audioActivated), props.onWrite(element[1])]
+                    [Piano.play(element[1], audioActivated), 
+                    props.onWrite(element[1]),
+                    new Audio('../dist/music/piano/'+element[2]).play()
+                ]
                 })
                 document.getElementById('piano').appendChild(temp)
             })
         }               
     }, [window.innerWidth])
 
+    // c = do, d = RÉ, e = MI, f = FA, g = SOL, a = LA , b = SI
 
     return (
         <>
             <label>Son du piano</label> 
             <input type="checkbox" checked={audioActivated} onChange={(e => setAudioActivated(e.target.checked))} />
-            <ul className="set" id="piano">
-                {
-                // c = do, d = RÉ, e = MI, f = FA, g = SOL, a = LA , b = SI
-                }
-            </ul>
-
-            {notation.forEach(element => {
-                return (<audio id={element[1]} src={"../dist/music/piano/"+element[2]}></audio>)
-            })}
+            <ul className="set" id="piano"></ul>
         </>
     );
 };

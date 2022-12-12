@@ -83,7 +83,7 @@ const User = () => {
                             </div>
 
                             <div className='user__sheetList'>
-                                <h3>Dernière partitions joués</h3>
+                                <h3>Dernières partitions joués</h3>
                                 <div className='user__sheetList__list'>
                                     {sheets &&
                                         sheets.map(element => {

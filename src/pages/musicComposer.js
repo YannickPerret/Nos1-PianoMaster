@@ -118,18 +118,18 @@ const MusicComposer = () => {
     return (
         <>
             <Header />
-            <main className='musicComposer'>
-                <div className='musicComposer__title'>
-                    <h2 contentEditable onChange={(e => setTitleCompose(e.target.name))} suppressContentEditableWarning={true}>{titleCompose}</h2>
-                </div>
+                <main className='musicComposer'>
+                    <div className='musicComposer__title'>
+                        <h2 contentEditable onChange={(e => setTitleCompose(e.target.name))} suppressContentEditableWarning={true}>{titleCompose}</h2>
+                    </div>
 
-                <div id="musicComposer__sheet" className='musicComposer__sheet'>
+                    <div id="musicComposer__sheet" className='musicComposer__sheet'>
 
-                </div>
-                <div className="musicComposer_piano">
-                    <PianoKeyboard onWrite={writeMusic} />
-                </div>
-            </main>
+                    </div>
+                    <div className="musicComposer_piano">
+                        <PianoKeyboard onWrite={writeMusic} />
+                    </div>
+                </main>
             <Menu />
         </>
 

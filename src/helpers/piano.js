@@ -3,15 +3,18 @@ export class Piano {
         
     }
 
-    static play = ($note, $isAudioEnabled) => {
+    static play = (note, isAudioEnabled) => {
+        const audio=document.getElementById(note);
 
-        console.log($note);
-        const audio=document.getElementById($note);
-        if(audio && $isAudioEnabled){
+        if(audio && isAudioEnabled){
+
             audio.currentTime=0;
             audio.play();
+            
         }
     }
+
+
 
    
 

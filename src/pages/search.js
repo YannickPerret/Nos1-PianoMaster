@@ -9,7 +9,6 @@ const Search = () => {
     return (
         <>
             <Header />
-            
             <main className='search'>
                     <h2 className='search__title'>Rechercher une partition</h2>
                     <input type={'text'} value={query} placeholder="Chercher un artiste, titre de musique,..." onChange={(e => setQuery(e.target.value))} />
