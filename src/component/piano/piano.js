@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Piano } from '../../helpers/piano';
-import MusicAudio from '../sheets/musicAudio';
+import React, { useState, useMemo } from 'react';
+
 
 const PianoMaster = (props) => {
     const [audioActivated, setAudioActivated] = useState(true);
-    const [notation, setNotation] = useState([
+    const notation = [
         ["white e", "c/4", "c4.mp3"],
         ["black ds", "c#/e", "c4D.mp3"],
         ["white d", "d/4", "d4.mp3"],
@@ -16,35 +15,33 @@ const PianoMaster = (props) => {
         ["black gs", "g#/4", "g4D.mp3"],
         ["white g", "a/4", "a4.mp3"],
         ["black fs", "a#/4", "a4D.mp3"],
-        ["white f", "b/4", "b4.mp3"]
-    ])
+        ["white f", "b/4", "b4.mp3"],
+    ];
 
-    useEffect(() => {
-        document.getElementById('piano').innerHTML=""
-        for (let i = 0; i < window.innerWidth; i += 755) {
-            notation.forEach(element => {
-                let temp = document.createElement('li')
-                temp.className = element[0];
-                temp.addEventListener('click', () =>{
-                    [Piano.play(element[1], audioActivated), 
+    // Utilisez la fonction useMemo pour mémoriser le résultat de la fonction map()
+    const pianoKeys = useMemo(() => {
+
+        return notation.map(element => {
+            return (
+                <li key={element[0]} className={element[0]} onClick={() => {
                     props.onWrite(element[1]),
-                    new Audio('../dist/music/piano/'+element[2]).play()
-                ]
-                })
-                document.getElementById('piano').appendChild(temp)
-            })
-        }               
-    }, [window.innerWidth])
-
+                    // Seulement jouer le son si audioActivated est true
+                    audioActivated && new Audio('../dist/music/piano/' + element[2]).play()
+                }}>
+                </li>
+            )
+        });
+    }, [notation, audioActivated]);
     // c = do, d = RÉ, e = MI, f = FA, g = SOL, a = LA , b = SI
 
     return (
         <>
-            <label>Son du piano</label> 
+            <label>Son du piano</label>
             <input type="checkbox" checked={audioActivated} onChange={(e => setAudioActivated(e.target.checked))} />
-            <ul className="set" id="piano"></ul>
+            <ul className="set" id="piano">
+                {pianoKeys}
+            </ul>
         </>
     );
 };
-
 export default PianoMaster;

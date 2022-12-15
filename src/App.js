@@ -13,7 +13,7 @@ class App extends Component{
          <Routes>
             <Route path="/" element={<Home />} />
             <Route path="musicSheet" element={<MusicSheet />} />
-            <Route path="musicSheet/:idSheet" element={<MusicSheet />} />
+            <Route path="musicSheet/:id" element={<MusicSheet />} />
             <Route path="musicSheetList" element={<MusicComposer />} />
             <Route path="search" element={<Search />} />
             <Route path="users" element={<User />} />

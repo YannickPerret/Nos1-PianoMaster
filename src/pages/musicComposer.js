@@ -9,7 +9,6 @@ const MusicComposer = () => {
 
     // Utilisez l'état local pour enregistrer les informations sur les notes
     const [notes, setNotes] = useState([]);
-    const [staves, setStaves] = useState([]);
 
     const staveWidth = 180;
 
@@ -23,10 +22,13 @@ const MusicComposer = () => {
 
 
     const showStave = () => {
-
-        let div = document.getElementById("musicComposer__sheet");
-
-        div.innerHTML = ""
+        console.log("lol")
+        // Utilisez document.querySelector pour vérifier si l'élément existe
+        let div = document.querySelector("#musicComposer__sheet");
+        if (div) {
+            // Si l'élément existe, définissez son contenu HTML
+            div.innerHTML = "";
+        }
 
         const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
 
@@ -48,7 +50,6 @@ const MusicComposer = () => {
     }
 
     const writeMusic = (_key = null) => {
-        console.log("fff")
         // Définissez une variable pour stocker la largeur maximale de l'écran
         // en utilisant la largeur de la mesure et la largeur de l'écran
         const maxScreenWidth = Math.floor(window.innerWidth / staveWidth);
@@ -84,7 +85,7 @@ const MusicComposer = () => {
                 currentLine = 1;
             }
         }
-        if(_key !== null){
+        if (_key !== null) {
             // Ajoutez la nouvelle note à la dernière mesure du tableau en utilisant une boucle for
             for (let i = 0; i < 1; i++) {
                 if (_key.includes("#")) {
@@ -95,13 +96,8 @@ const MusicComposer = () => {
             }
             setNotes(measures);
         }
-
-       
         showStave();
     };
-
-
-
 
     // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
     useEffect(() => {
@@ -112,24 +108,28 @@ const MusicComposer = () => {
         // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
         return () => {
             window.removeEventListener('resize', writeMusic());
+            let div = document.querySelector("#musicComposer__sheet");
+            if (div) {
+                div.parentNode.removeChild(div);
+            }
         }
     }, []); // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
 
     return (
         <>
             <Header />
-                <main className='musicComposer'>
-                    <div className='musicComposer__title'>
-                        <h2 contentEditable onChange={(e => setTitleCompose(e.target.name))} suppressContentEditableWarning={true}>{titleCompose}</h2>
-                    </div>
+            <main className='musicComposer'>
+                <div className='musicComposer__title'>
+                    <h2 contentEditable onChange={(e => setTitleCompose(e.target.name))} suppressContentEditableWarning={true}>{titleCompose}</h2>
+                </div>
 
-                    <div id="musicComposer__sheet" className='musicComposer__sheet'>
+                <div id="musicComposer__sheet" className='musicComposer__sheet'>
 
-                    </div>
-                    <div className="musicComposer_piano">
-                        <PianoKeyboard onWrite={writeMusic} />
-                    </div>
-                </main>
+                </div>
+                <div className="musicComposer_piano">
+                    <PianoKeyboard onWrite={writeMusic} />
+                </div>
+            </main>
             <Menu />
         </>
 

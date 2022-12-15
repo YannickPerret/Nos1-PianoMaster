@@ -6,6 +6,7 @@ import dataSheet from '../../helpers/sheets.json';
 const SearchPartition = () => {
 
     const [query, setQuery] = useState("");
+    
     return (
         <div className="searchSheet">
             <h2 className="searchSheet__title">Rechercher une partition</h2>
@@ -15,17 +16,17 @@ const SearchPartition = () => {
             </div>
                 
                 {query ?
-                <div className='searchSheet__result'>
-                    {dataSheet.filter(post => {
-                        if (query === '') {
-                            return post;
-                        } else if (post.title.toLowerCase().includes(query.toLowerCase())) {
-                            return post;
-                        }
-                    }).map(element => {
-                        return <SearchCards search={element} key={element.id} />
-                    })}
-                </div>:null
+                    <div className='searchSheet__result'>
+                        {dataSheet.filter(post => {
+                            if (query === '') {
+                                return post;
+                            } else if (post.title.toLowerCase().includes(query.toLowerCase())) {
+                                return post;
+                            }
+                        }).map(element => {
+                            return <SearchCards search={element} key={element.id} />
+                        })}
+                    </div>:null
                 }
         </div>
     );

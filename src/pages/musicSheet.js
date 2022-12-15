@@ -8,8 +8,7 @@ import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import MusicAudio from '../component/sheets/musicAudio';
 
 const MusicSheet = () => {
-
-    let idSheet =  useMatch('musicSheet/:idSheet').params.idSheet;
+    let idSheet =  useMatch('musicSheet/:id').params.id;
     const [sheet, setSheet] = useState({});
     const [currentPageNumber, setcurrentPageNumber] = useState(1);
     const [audioActivated, setAudioActivated] = useState(true)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useMatch, useNavigate } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
 import Menu from '../component/layout/menu';
 import Headers from '../component/layout/header';
 import SheetCards from '../component/sheets/sheetCards';
@@ -52,11 +52,8 @@ const User = () => {
     useEffect(() => {
 
         async function fetchData() {
-            // You can await here
              await setUser(getUserById(match))
-
              await setSheets(getSheetsByUserId(match))
-
           }
           fetchData();
     }, [match])
