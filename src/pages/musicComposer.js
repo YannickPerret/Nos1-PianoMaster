@@ -1,34 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../component/layout/header';
 import Menu from '../component/layout/menu';
 import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow";
 import PianoKeyboard from '../component/piano/piano';
 
 const MusicComposer = () => {
-    const [titleCompose, setTitleCompose] = useState ('Titre par défaut')
+    const [titleCompose, setTitleCompose] = useState('Titre par défaut')
 
+    // Utilisez l'état local pour enregistrer les informations sur les notes
     const [notes, setNotes] = useState([]);
+    const [staves, setStaves] = useState([]);
 
-    const staveWidth = 180
-    let rendererHeight = 100
 
+    const staveWidth = 180;
+    let rendererHeight = 100;
+
+    // Récupérez un objet VexFlow 
     const VF = Vex.Flow;
 
-    const showStave = async () => {
+    // Définissez le nombre maximum de staves qui peuvent être affichés sur une ligne en fonction de la largeur de la fenêtre
+    const maxStavesPerLine = Math.floor(window.innerWidth / staveWidth);
+
+
+    const showStave = () => {
+
         let div = document.getElementById("musicComposer__sheet");
 
-        div.innerHTML =""
+        div.innerHTML = ""
 
         const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
-        
+
         // Configure the rendering context
-        renderer.resize((window.innerWidth - 20), rendererHeight);
-        
+        // Utilisez la largeur de la fenêtre pour spécifier la largeur du renderer
+        renderer.resize(window.innerWidth - 20, rendererHeight);
 
         const context = renderer.getContext();
         context.setFont("Arial", 20);
 
-        notes.map((element, index) => {
+
+        notes.map((element) => {
             // Connect it to the rendering context and draw!
             element.stave.setContext(context).draw();
 
@@ -37,43 +47,100 @@ const MusicComposer = () => {
         })
     }
 
+    /* const writeMusic = (_key) => {
+ 
+         let tempNote = notes
+ 
+         if (tempNote.length === 0) {
+             tempNote.push({ stave: new Stave(0, 0, staveWidth), notes: [] })
+             tempNote.at(0).stave.addClef("treble")
+         }
+ 
+         tempNote.at(-1).notes.map((element, index) => {
+ 
+             if (index >= 3) {
+                 if ((tempNote.length % 2) === 0) {
+                     tempNote.push({ stave: new Stave(0, tempNote.at(-1).stave.getY() + 100, staveWidth), notes: [] })
+                     rendererHeight += 100;
+                 }
+                 else {
+                     tempNote.push({ stave: new Stave(tempNote.at(-1).stave.getX() + staveWidth, tempNote.at(-1).stave.getY(), staveWidth), notes: [] })
+                 }
+             }
+         })
+ 
+         if (_key.includes('#')) {
+             tempNote.at(-1).notes.push(new StaveNote({ keys: [_key], duration: "q" }).addModifier(new Accidental("#")))
+         }
+         else {
+             tempNote.at(-1).notes.push(new StaveNote({ keys: [_key], duration: "q" }))
+         }
+ 
+         setNotes(tempNote)
+ 
+         showStave()
+     }*/
+
     const writeMusic = (_key) => {
+        // Définissez une variable pour stocker la largeur maximale de l'écran
+        // en utilisant la largeur de la mesure et la largeur de l'écran
+        const maxScreenWidth = Math.floor(window.innerWidth / staveWidth);
+        let measures = notes;
 
-        let tempNote = notes
-
-        if(tempNote.length === 0){
-            tempNote.push({stave: new Stave(0, 0 , 180), notes:[]})
-            tempNote.at(0).stave.addClef("treble")
+        // Si le tableau de notes est vide, ajoutez une mesure
+        if (measures.length === 0) {
+            measures.push({stave: new Stave(0, 0, staveWidth), notes: []});
+            measures[0].stave.addClef("treble");
         }
 
-        tempNote.at(-1).notes.map((element, index) =>{
+        // Récupérez la dernière mesure du tableau de notes
+        const lastMeasure = measures[measures.length - 1];
 
-            if(index >= 3){
-                if((tempNote.length % 2) === 0){
-                    tempNote.push({stave: new Stave(0, tempNote.at(-1).stave.getY()+100 , staveWidth), notes:[]})
-                    rendererHeight += 100;
-                }
-                else{
-                    tempNote.push({stave: new Stave(tempNote.at(-1).stave.getX() + staveWidth, tempNote.at(-1).stave.getY() , staveWidth), notes:[]})
-                }
+        // Si la dernière mesure contient déjà quatre notes,
+        // ajoutez une nouvelle mesure si le tableau de notes n'a pas atteint la largeur maximale de l'écran
+        if (lastMeasure.notes.length >= 3) {
+            if (measures.length < maxScreenWidth) {
+                measures.push({stave: new Stave(measures[measures.length - 1].stave.getX() + staveWidth, measures[measures.length - 1].stave.getY(),staveWidth),notes: []});
+            } else {
+                // Si le tableau de notes a atteint la largeur maximale de l'écran,
+                // ajoutez une mesure en dessous de la dernière mesure et réinitialisez
+                // la position en X de la mesure pour qu'elle recommence au début de l'écran
+                measures.push({stave: new Stave(0,measures[measures.length - 1].stave.getY() + 100,staveWidth), notes: []});
+                rendererHeight += 100;
             }
-        })
-
-        if(_key.includes('#')){
-            tempNote.at(-1).notes.push(new StaveNote({keys: [_key], duration:"q"}).addModifier(new Accidental("#")))
-        }
-        else {
-            tempNote.at(-1).notes.push(new StaveNote({keys: [_key], duration:"q"}))
         }
 
-        setNotes(tempNote)
+        // Ajoutez la nouvelle note à la dernière mesure du tableau en utilisant une boucle for
+        for (let i = 0; i < 1; i++) {
+            if (_key.includes("#")) {
+                lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }).addModifier(new Accidental("#")));
+            } else {
+                lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }));
+            }
+        }
 
-        showStave()
-    }
+        setNotes(measures);
+
+        showStave();
+    };
+
+
+
+    // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
+    useEffect(() => {
+        // Ajoutez un gestionnaire d'événement qui exécute la fonction showStave lorsque la taille de la fenêtre change
+        window.addEventListener('resize', () => showStave);
+
+        // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
+        // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
+        return () => {
+            window.removeEventListener('resize', showStave);
+        }
+    }, []); // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
 
     return (
         <>
-        <Header />
+            <Header />
             <main className='musicComposer'>
                 <div className='musicComposer__title'>
                     <h2 contentEditable onChange={(e => setTitleCompose(e.target.name))} suppressContentEditableWarning={true}>{titleCompose}</h2>
@@ -86,9 +153,9 @@ const MusicComposer = () => {
                     <PianoKeyboard onWrite={writeMusic} />
                 </div>
             </main>
-        <Menu />
+            <Menu />
         </>
-        
+
     );
 };
 
