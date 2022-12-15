@@ -22,7 +22,6 @@ const MusicComposer = () => {
 
 
     const showStave = () => {
-        console.log("lol")
         // Utilisez document.querySelector pour vérifier si l'élément existe
         let div = document.querySelector("#musicComposer__sheet");
         if (div) {
@@ -41,11 +40,13 @@ const MusicComposer = () => {
 
 
         notes.map((element) => {
-            // Connect it to the rendering context and draw!
-            element.stave.setContext(context).draw();
+            if(element.notes.length > 0){
+                // Connect it to the rendering context and draw!
+                element.stave.setContext(context).draw();
 
-            // Helper function to justify and draw a 4/4 voice.
-            Formatter.FormatAndDraw(context, element.stave, element.notes);
+                // Helper function to justify and draw a 4/4 voice.
+                Formatter.FormatAndDraw(context, element.stave, element.notes);
+            }
         })
     }
 
@@ -107,11 +108,7 @@ const MusicComposer = () => {
         // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
         // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
         return () => {
-            window.removeEventListener('resize', writeMusic());
-            let div = document.querySelector("#musicComposer__sheet");
-            if (div) {
-                div.parentNode.removeChild(div);
-            }
+            window.removeEventListener('resize', () => {writeMusic()});
         }
     }, []); // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
 
