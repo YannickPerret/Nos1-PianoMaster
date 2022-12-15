@@ -11,15 +11,15 @@ const MusicComposer = () => {
     const [notes, setNotes] = useState([]);
     const [staves, setStaves] = useState([]);
 
-
     const staveWidth = 180;
+
+    // Ajoutez une variable pour stocker le numéro de ligne actuel des mesures
+    let currentLine = 0;
+
     let rendererHeight = 100;
 
     // Récupérez un objet VexFlow 
     const VF = Vex.Flow;
-
-    // Définissez le nombre maximum de staves qui peuvent être affichés sur une ligne en fonction de la largeur de la fenêtre
-    const maxStavesPerLine = Math.floor(window.innerWidth / staveWidth);
 
 
     const showStave = () => {
@@ -47,50 +47,21 @@ const MusicComposer = () => {
         })
     }
 
-    /* const writeMusic = (_key) => {
- 
-         let tempNote = notes
- 
-         if (tempNote.length === 0) {
-             tempNote.push({ stave: new Stave(0, 0, staveWidth), notes: [] })
-             tempNote.at(0).stave.addClef("treble")
-         }
- 
-         tempNote.at(-1).notes.map((element, index) => {
- 
-             if (index >= 3) {
-                 if ((tempNote.length % 2) === 0) {
-                     tempNote.push({ stave: new Stave(0, tempNote.at(-1).stave.getY() + 100, staveWidth), notes: [] })
-                     rendererHeight += 100;
-                 }
-                 else {
-                     tempNote.push({ stave: new Stave(tempNote.at(-1).stave.getX() + staveWidth, tempNote.at(-1).stave.getY(), staveWidth), notes: [] })
-                 }
-             }
-         })
- 
-         if (_key.includes('#')) {
-             tempNote.at(-1).notes.push(new StaveNote({ keys: [_key], duration: "q" }).addModifier(new Accidental("#")))
-         }
-         else {
-             tempNote.at(-1).notes.push(new StaveNote({ keys: [_key], duration: "q" }))
-         }
- 
-         setNotes(tempNote)
- 
-         showStave()
-     }*/
-
-    const writeMusic = (_key) => {
+    const writeMusic = (_key = null) => {
+        console.log("fff")
         // Définissez une variable pour stocker la largeur maximale de l'écran
         // en utilisant la largeur de la mesure et la largeur de l'écran
         const maxScreenWidth = Math.floor(window.innerWidth / staveWidth);
+
+        //créer un tableau de mesures
         let measures = notes;
 
         // Si le tableau de notes est vide, ajoutez une mesure
         if (measures.length === 0) {
-            measures.push({stave: new Stave(0, 0, staveWidth), notes: []});
+            measures.push({ stave: new Stave(0, 0, staveWidth), notes: [] });
             measures[0].stave.addClef("treble");
+            // Réinitialisez la valeur de la variable currentLine lorsqu'une mesure est ajoutée
+            currentLine = 1;
         }
 
         // Récupérez la dernière mesure du tableau de notes
@@ -99,42 +70,48 @@ const MusicComposer = () => {
         // Si la dernière mesure contient déjà quatre notes,
         // ajoutez une nouvelle mesure si le tableau de notes n'a pas atteint la largeur maximale de l'écran
         if (lastMeasure.notes.length >= 3) {
-            if (measures.length < maxScreenWidth) {
-                measures.push({stave: new Stave(measures[measures.length - 1].stave.getX() + staveWidth, measures[measures.length - 1].stave.getY(),staveWidth),notes: []});
+            // Utilisez la variable currentLine pour vérifier si le tableau de notes a atteint la largeur maximale de l'écran
+            if (currentLine < maxScreenWidth) {
+                measures.push({ stave: new Stave(measures[measures.length - 1].stave.getX() + staveWidth, measures[measures.length - 1].stave.getY(), staveWidth), notes: [] });
+                // Incrémentez la valeur de la variable currentLine lorsqu'une mesure est ajoutée
+                currentLine++;
             } else {
                 // Si le tableau de notes a atteint la largeur maximale de l'écran,
                 // ajoutez une mesure en dessous de la dernière mesure et réinitialisez
                 // la position en X de la mesure pour qu'elle recommence au début de l'écran
-                measures.push({stave: new Stave(0,measures[measures.length - 1].stave.getY() + 100,staveWidth), notes: []});
+                measures.push({ stave: new Stave(0, measures[measures.length - 1].stave.getY() + 100, staveWidth), notes: [] });
                 rendererHeight += 100;
+                currentLine = 1;
             }
         }
-
-        // Ajoutez la nouvelle note à la dernière mesure du tableau en utilisant une boucle for
-        for (let i = 0; i < 1; i++) {
-            if (_key.includes("#")) {
-                lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }).addModifier(new Accidental("#")));
-            } else {
-                lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }));
+        if(_key !== null){
+            // Ajoutez la nouvelle note à la dernière mesure du tableau en utilisant une boucle for
+            for (let i = 0; i < 1; i++) {
+                if (_key.includes("#")) {
+                    lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }).addModifier(new Accidental("#")));
+                } else {
+                    lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }));
+                }
             }
+            setNotes(measures);
         }
 
-        setNotes(measures);
-
+       
         showStave();
     };
+
 
 
 
     // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
     useEffect(() => {
         // Ajoutez un gestionnaire d'événement qui exécute la fonction showStave lorsque la taille de la fenêtre change
-        window.addEventListener('resize', () => showStave);
+        window.addEventListener('resize', () => writeMusic());
 
         // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
         // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
         return () => {
-            window.removeEventListener('resize', showStave);
+            window.removeEventListener('resize', writeMusic());
         }
     }, []); // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
 
