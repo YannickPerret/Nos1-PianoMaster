@@ -17,6 +17,8 @@ const MusicComposer = () => {
 
     let rendererHeight = 100;
 
+    let currentWindowWidth = window.innerWidth
+
     // Récupérez un objet VexFlow 
     const VF = Vex.Flow;
 
@@ -40,7 +42,7 @@ const MusicComposer = () => {
 
 
         notes.map((element) => {
-            if(element.notes.length > 0){
+            if (element.notes.length > 0) {
                 // Connect it to the rendering context and draw!
                 element.stave.setContext(context).draw();
 
@@ -53,7 +55,7 @@ const MusicComposer = () => {
     const writeMusic = (_key = null) => {
         // Définissez une variable pour stocker la largeur maximale de l'écran
         // en utilisant la largeur de la mesure et la largeur de l'écran
-        const maxScreenWidth = Math.floor(window.innerWidth / staveWidth);
+        const maxScreenWidth = Math.floor(currentWindowWidth / staveWidth);
 
         //créer un tableau de mesures
         let measures = notes;
@@ -108,9 +110,10 @@ const MusicComposer = () => {
         // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
         // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
         return () => {
-            window.removeEventListener('resize', () => {writeMusic()});
+            window.removeEventListener('resize', () => { writeMusic() });
         }
     }, []); // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
+
 
     return (
         <>
