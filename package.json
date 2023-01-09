@@ -1,0 +1,7 @@
+{
+  "name": "nos1-pianomaster",
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend"
+  ]
+}

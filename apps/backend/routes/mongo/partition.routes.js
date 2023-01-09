@@ -1,10 +1,11 @@
 import express from 'express'
-import { getAll } from '../../controllers/mongo/partitions.controller.js'
+import partitionController from '../../controllers/mongo/partitions.controller.js'
 
 const partition = app => {
   const router = express.Router()
-  router.get('/', getAll)
-  app.use('/partitions', router)
+  router.get('/', partitionController.getAll)
+  router.post('/', partitionController.create)
+  app.use('/mongo/partitions', router)
 }
 
 export default partition
