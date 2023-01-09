@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../component/layout/header';
 import Menu from '../component/layout/menu';
-import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow";
+import { Vex, Stave, StaveNote, Formatter, Accidental, Stem } from "vexflow";
 import PianoKeyboard from '../component/piano/piano';
 
 const MusicComposer = () => {
@@ -62,8 +62,13 @@ const MusicComposer = () => {
 
         // Si le tableau de notes est vide, ajoutez une mesure
         if (measures.length === 0) {
-            measures.push({ stave: new Stave(0, 0, staveWidth), notes: [] });
-            measures[0].stave.addClef("treble");
+           /* measures.push({ stave: new Stave(0, 0, staveWidth), notes: [] });
+            measures[0].stave.addClef("treble");*/
+
+            measures.push({ stave: new Stave(0, 0, staveWidth), notes: [new Stave({keys:'e/3', duration:'q'})] });
+            measures[0].stave.addClef('trebble');
+            measures[0].stave.keySignature('F');
+
             // Réinitialisez la valeur de la variable currentLine lorsqu'une mesure est ajoutée
             currentLine = 1;
         }
@@ -92,11 +97,13 @@ const MusicComposer = () => {
             // Ajoutez la nouvelle note à la dernière mesure du tableau en utilisant une boucle for
             for (let i = 0; i < 1; i++) {
                 if (_key.includes("#")) {
-                    lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }).addModifier(new Accidental("#")));
+                    // q: 1 temps, 1 = 4 temps, 2 = 2 temps
+                    lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q"}).addModifier(new Accidental("#")));
                 } else {
                     lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }));
                 }
             }
+           
             setNotes(measures);
         }
         showStave();
