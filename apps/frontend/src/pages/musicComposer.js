@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../component/layout/header';
 import Menu from '../component/layout/menu';
-import { Vex, Stave, StaveNote, Formatter, Accidental, Stem } from "vexflow";
+import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow";
 import PianoKeyboard from '../component/piano/piano';
 
 const MusicComposer = () => {
@@ -10,12 +10,19 @@ const MusicComposer = () => {
     // Utilisez l'état local pour enregistrer les informations sur les notes
     const [notes, setNotes] = useState([]);
 
+    const [sheet, setSheet] = useState({
+        'sol':
+            [],
+        'fa':
+            [],
+    })
+
     const staveWidth = 180;
 
     // Ajoutez une variable pour stocker le numéro de ligne actuel des mesures
     let currentLine = 0;
 
-    let rendererHeight = 100;
+    let rendererHeight = 300;
 
     let currentWindowWidth = window.innerWidth
 
@@ -40,16 +47,19 @@ const MusicComposer = () => {
         const context = renderer.getContext();
         context.setFont("Arial", 20);
 
+          // Itérez sur les portées de l'objet "sheet" et dessinez-les
+ /* Iterating over the sheet object and drawing the staves and notes. */
+        for (const [test, stave] of Object.entries(sheet)) {
+            console.log(stave)
+            stave.forEach(element => {
+            element.stave.setContext(context).draw();
+            
+            });
 
-        notes.map((element) => {
-            if (element.notes.length > 0) {
-                // Connect it to the rendering context and draw!
-                element.stave.setContext(context).draw();
+           
 
-                // Helper function to justify and draw a 4/4 voice.
-                Formatter.FormatAndDraw(context, element.stave, element.notes);
-            }
-        })
+            //Formatter.FormatAndDraw(context, element.stave, element.notes);
+        }
     }
 
     const writeMusic = (_key = null) => {
@@ -57,54 +67,68 @@ const MusicComposer = () => {
         // en utilisant la largeur de la mesure et la largeur de l'écran
         const maxScreenWidth = Math.floor(currentWindowWidth / staveWidth);
 
-        //créer un tableau de mesures
-        let measures = notes;
-
         // Si le tableau de notes est vide, ajoutez une mesure
-        if (measures.length === 0) {
-           /* measures.push({ stave: new Stave(0, 0, staveWidth), notes: [] });
-            measures[0].stave.addClef("treble");*/
+        if(sheet.sol.length === 0 && sheet.fa.length === 0){
+        //if (measures.length === 0) {
 
-            measures.push({ stave: new Stave(0, 0, staveWidth), notes: [new Stave({keys:'e/3', duration:'q'})] });
-            measures[0].stave.addClef('trebble');
-            measures[0].stave.keySignature('F');
+            sheet.sol.push({ stave: new Stave(0, 0, staveWidth), notes: [] })
+            sheet.sol[0].stave.addClef("treble");
+            sheet.sol[0].stave.addTimeSignature('4/4');
+
+            sheet.fa.push({ stave: new Stave(0, 100, staveWidth), notes: [] })
+            sheet.fa[0].stave.addClef("bass");
+            sheet.fa[0].stave.addTimeSignature('4/4');
 
             // Réinitialisez la valeur de la variable currentLine lorsqu'une mesure est ajoutée
             currentLine = 1;
         }
 
         // Récupérez la dernière mesure du tableau de notes
-        const lastMeasure = measures[measures.length - 1];
+        //const lastMeasure = measures[measures.length - 1];
 
-        // Si la dernière mesure contient déjà quatre notes,
-        // ajoutez une nouvelle mesure si le tableau de notes n'a pas atteint la largeur maximale de l'écran
-        if (lastMeasure.notes.length >= 3) {
-            // Utilisez la variable currentLine pour vérifier si le tableau de notes a atteint la largeur maximale de l'écran
+        const lastMesureSol = sheet.sol.at(-1)
+        const lastMesureFa = sheet.fa.at(-1)
+
+        if(lastMesureSol.notes.length >= 3 || lastMesureFa.notes.length >= 3){
             if (currentLine < maxScreenWidth) {
-                measures.push({ stave: new Stave(measures[measures.length - 1].stave.getX() + staveWidth, measures[measures.length - 1].stave.getY(), staveWidth), notes: [] });
+                sheet.sol.push({ stave: new Stave(lastMesureSol[lastMesureSol.length - 1].stave.getX() + staveWidth, lastMesureSol[lastMesureSol.length - 1].stave.getY(), staveWidth), notes: [] })
+                sheet.fa.push({ stave: new Stave(lastMesureFa[lastMesureFa.length - 1].stave.getX() + staveWidth, lastMesureFa[lastMesureFa.length - 1].stave.getY(), staveWidth), notes: [] })
+
                 // Incrémentez la valeur de la variable currentLine lorsqu'une mesure est ajoutée
                 currentLine++;
             } else {
                 // Si le tableau de notes a atteint la largeur maximale de l'écran,
                 // ajoutez une mesure en dessous de la dernière mesure et réinitialisez
                 // la position en X de la mesure pour qu'elle recommence au début de l'écran
-                measures.push({ stave: new Stave(0, measures[measures.length - 1].stave.getY() + 100, staveWidth), notes: [] });
+                sheet.sol.push({ stave: new Stave(0, lastMesureSol[lastMesureSol.length - 1].stave.getY() + 300, staveWidth), notes: [] })
+                sheet.fa.push({ stave: new Stave(0, lastMesureFa[lastMesureFa.length - 1].stave.getY() + 300, staveWidth), notes: [] })
+
                 rendererHeight += 100;
                 currentLine = 1;
             }
         }
+
         if (_key !== null) {
             // Ajoutez la nouvelle note à la dernière mesure du tableau en utilisant une boucle for
             for (let i = 0; i < 1; i++) {
-                if (_key.includes("#")) {
-                    // q: 1 temps, 1 = 4 temps, 2 = 2 temps
-                    lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q"}).addModifier(new Accidental("#")));
-                } else {
-                    lastMeasure.notes.push(new StaveNote({ keys: [_key], duration: "q" }));
+                if(_key.match(/\d+/g) < 4){
+                    if (_key.includes("#")) {
+                        sheet.fa.at(-1).notes.push(new StaveNote({keys: [_key], duration: 'q'}).addModifier(new Accidental("#")));
+                    }
+                    else{
+                        sheet.fa.at(-1).notes.push(new StaveNote({ keys: [_key], duration: "q" }));
+                    }
+                }
+                else{
+                    if (_key.includes("#")) {
+                        sheet.sol.at(-1).notes.push(new StaveNote({ keys: [_key], duration: "q" }));
+                    }
+                    else {
+                        sheet.sol.at(-1).notes.push(new StaveNote({keys: [_key], duration: 'q'}).addModifier(new Accidental("#")));
+                    }
                 }
             }
-           
-            setNotes(measures);
+           //console.log(sheet)
         }
         showStave();
     };
