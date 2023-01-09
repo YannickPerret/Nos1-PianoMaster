@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import NoteSchema from './notes.model';
+import NoteSchema from './notes.model.js';
 
 dotenv.config();
 
