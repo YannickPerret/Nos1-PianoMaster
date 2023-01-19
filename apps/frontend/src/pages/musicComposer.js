@@ -11,12 +11,13 @@ const MusicComposer = () => {
         'sol':undefined,
         'fa':undefined,
     }
+
     let notes = {
         "sol":[],
         "fa":[],
     };
 
-    const staveWidth = 220;
+    const staveWidth = 230;
     const staveHeight = 120;
 
     let rendererHeight = 1000;
@@ -75,7 +76,6 @@ const MusicComposer = () => {
         return context
     }
 
-
     const setupPianoPartition = () => {
         
         let context = renderPianoPartition()
@@ -94,46 +94,50 @@ const MusicComposer = () => {
     const createPianoPartition = () => {  
         sheet.sol=[]
         sheet.fa=[]
-        const maxStaveInWindow = Math.floor(window.innerWidth / staveWidth);
+        const divMusicSheet = document.getElementById("musicComposer__sheet");
+        const maxStaveInWindow = Math.floor(divMusicSheet.clientWidth / staveWidth);
 
         let numberStaveFa = 0
         let numberStaveSol = 0
 
         // Définissez une variable pour stocker la largeur maximale de l'écran
         // en utilisant la largeur de la mesure et la largeur de l'écran
-        let myNode = document.getElementById("musicComposer__sheet");
-        if(myNode){
-            myNode.innerHTML = ""
+        if(divMusicSheet){
+            divMusicSheet.innerHTML = ""
         }
         
-        const renderer = new VF.Renderer(myNode, VF.Renderer.Backends.SVG);
+        const renderer = new VF.Renderer(divMusicSheet, VF.Renderer.Backends.SVG);
         // Configure the rendering context
         // Utilisez la largeur de la fenêtre pour spécifier la largeur du renderer
         renderer.resize(window.innerWidth - 20, rendererHeight);
 
-        let context = renderer.getContext();
+        const context = renderer.getContext();
         context.setFont("Arial", 20);
+        if(sheet.sol.length === 0 && sheet.fa.length === 0){
 
-        sheet.sol.push({ stave: new Stave(0, 0, 220)})
-        sheet.sol[0].stave.addClef("treble");
-        sheet.sol[0].stave.addTimeSignature('4/4');
-        sheet.sol[0].stave.setContext(context).draw();
+            sheet.sol.push({ stave: new Stave(0, 0, 230)})
+            sheet.sol[0].stave.addClef("treble");
+            sheet.sol[0].stave.addTimeSignature('4/4');
+            sheet.sol[0].stave.setContext(context).draw();
+    
+            numberStaveSol++
+    
+            sheet.fa.push({ stave: new Stave(0, 100, 230)})
+            sheet.fa[0].stave.addClef("bass");
+            sheet.fa[0].stave.addTimeSignature('4/4');
+            sheet.fa[0].stave.setContext(context).draw();
+    
+            numberStaveFa++
+        }
 
-        numberStaveSol++
-
-        sheet.fa.push({ stave: new Stave(0, 100, 220)})
-        sheet.fa[0].stave.addClef("bass");
-        sheet.fa[0].stave.addTimeSignature('4/4');
-        sheet.fa[0].stave.setContext(context).draw();
-
-        numberStaveFa++
+        
 
 
-        notes.sol.map((noteInMeasure) => {
+        notes.sol.map((noteInAMeasure) => {
 
-            Formatter.FormatAndDraw(context, sheet.sol[sheet.sol.length-1].stave, noteInMeasure);
+            Formatter.FormatAndDraw(context, sheet.sol[sheet.sol.length-1].stave, noteInAMeasure);
 
-            if(noteInMeasure.length > 3){
+            if(noteInAMeasure.length > 3){
                 if (numberStaveSol < maxStaveInWindow) 
                 {
                     sheet.sol.push({ stave: new Stave(sheet.sol[sheet.sol.length-1].stave.getX() + staveWidth, sheet.sol[sheet.sol.length-1].stave.getY(), staveWidth) })
@@ -142,17 +146,17 @@ const MusicComposer = () => {
                 else
                 {
                     sheet.sol.push({ stave: new Stave(0, sheet.sol[sheet.sol.length-1].stave.getY() + (staveHeight + staveHeight), staveWidth) })
-                    numberStaveSol = 0;
+                    numberStaveSol = 1;
                 }
                 sheet.sol[sheet.sol.length-1].stave.setContext(context).draw();
             }
         })
 
-        notes.fa.map((noteInMeasure) => {
+        notes.fa.map((noteInAMeasure) => {
 
-            Formatter.FormatAndDraw(context, sheet.fa[sheet.fa.length-1].stave, noteInMeasure);
+            Formatter.FormatAndDraw(context, sheet.fa[sheet.fa.length-1].stave, noteInAMeasure);
 
-            if(noteInMeasure.length > 3)
+            if(noteInAMeasure.length > 3)
             {
                 if (numberStaveFa < maxStaveInWindow) 
                 {
@@ -162,7 +166,7 @@ const MusicComposer = () => {
                 else
                 {
                     sheet.fa.push({ stave: new Stave(0, sheet.fa[sheet.fa.length-1].stave.getY() + (staveHeight + staveHeight), staveWidth) })
-                    numberStaveFa = 0;
+                    numberStaveFa = 1;
                 }
                 sheet.fa[sheet.fa.length-1].stave.setContext(context).draw();
             }
@@ -201,7 +205,7 @@ return (
         <Menu />
     </>
 
-);
+    );
 };
 
 export default MusicComposer;
