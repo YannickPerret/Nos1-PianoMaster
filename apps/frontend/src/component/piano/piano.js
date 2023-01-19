@@ -57,19 +57,6 @@ const PianoMaster = (props) => {
         {note: 'a', octave: '5', name: 'white g'},
         {note: 'a#', octave: '5', name: 'black fs'},
         {note: 'b', octave: '5', name: 'white f'},
-
-        {note: 'c', octave: '6', name: 'white e'},
-        {note: 'c#', octave: '6', name: 'black ds'},
-        {note: 'd', octave: '6', name: 'white d'},
-        {note: 'd#', octave: '6', name: 'black cs'},
-        {note: 'e', octave: '6', name: 'white c'},
-        {note: 'f', octave: '6', name: 'white d'},
-        {note: 'f#', octave: '6', name: 'black as'},
-        {note: 'g', octave: '6', name: 'white a'},
-        {note: 'g#', octave: '6', name: 'black gs'},
-        {note: 'a', octave: '6', name: 'white g'},
-        {note: 'a#', octave: '6', name: 'black fs'},
-        {note: 'b', octave: '6', name: 'white f'},
     ]
 
     

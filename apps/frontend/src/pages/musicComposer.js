@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../component/layout/header';
 import Menu from '../component/layout/menu';
-import { Vex, Stave, StaveNote, Formatter, Accidental, Voice } from "vexflow";
+import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow";
 import PianoKeyboard from '../component/piano/piano';
 
 const MusicComposer = () => {
@@ -17,8 +17,9 @@ const MusicComposer = () => {
     };
 
     const staveWidth = 220;
+    const staveHeight = 120;
 
-    let rendererHeight = 300;
+    let rendererHeight = 1000;
     // Récupérez un objet VexFlow 
     const VF = Vex.Flow;
     
@@ -93,6 +94,11 @@ const MusicComposer = () => {
     const createPianoPartition = () => {  
         sheet.sol=[]
         sheet.fa=[]
+        const maxStaveInWindow = Math.floor(window.innerWidth / staveWidth);
+
+        let numberStaveFa = 0
+        let numberStaveSol = 0
+
         // Définissez une variable pour stocker la largeur maximale de l'écran
         // en utilisant la largeur de la mesure et la largeur de l'écran
         let myNode = document.getElementById("musicComposer__sheet");
@@ -113,24 +119,51 @@ const MusicComposer = () => {
         sheet.sol[0].stave.addTimeSignature('4/4');
         sheet.sol[0].stave.setContext(context).draw();
 
+        numberStaveSol++
+
         sheet.fa.push({ stave: new Stave(0, 100, 220)})
         sheet.fa[0].stave.addClef("bass");
         sheet.fa[0].stave.addTimeSignature('4/4');
         sheet.fa[0].stave.setContext(context).draw();
 
-        notes.sol.map((noteInMeasure, index) => {
+        numberStaveFa++
+
+
+        notes.sol.map((noteInMeasure) => {
+
             Formatter.FormatAndDraw(context, sheet.sol[sheet.sol.length-1].stave, noteInMeasure);
+
             if(noteInMeasure.length > 3){
-                sheet.sol.push({ stave: new Stave(sheet.sol[sheet.sol.length-1].stave.getX() + staveWidth, 0, staveWidth) })
+                if (numberStaveSol < maxStaveInWindow) 
+                {
+                    sheet.sol.push({ stave: new Stave(sheet.sol[sheet.sol.length-1].stave.getX() + staveWidth, sheet.sol[sheet.sol.length-1].stave.getY(), staveWidth) })
+                    numberStaveSol++
+                }
+                else
+                {
+                    sheet.sol.push({ stave: new Stave(0, sheet.sol[sheet.sol.length-1].stave.getY() + (staveHeight + staveHeight), staveWidth) })
+                    numberStaveSol = 0;
+                }
                 sheet.sol[sheet.sol.length-1].stave.setContext(context).draw();
             }
         })
 
-        notes.fa.map((noteInMeasure, index) => {
+        notes.fa.map((noteInMeasure) => {
+
             Formatter.FormatAndDraw(context, sheet.fa[sheet.fa.length-1].stave, noteInMeasure);
+
             if(noteInMeasure.length > 3)
             {
-                sheet.fa.push({ stave: new Stave(sheet.fa[sheet.fa.length-1].stave.getX() + staveWidth, 100, staveWidth) })
+                if (numberStaveFa < maxStaveInWindow) 
+                {
+                    sheet.fa.push({ stave: new Stave(sheet.fa[sheet.fa.length-1].stave.getX() + staveWidth, sheet.fa[sheet.fa.length-1].stave.getY(), staveWidth) })
+                    numberStaveFa++
+                }
+                else
+                {
+                    sheet.fa.push({ stave: new Stave(0, sheet.fa[sheet.fa.length-1].stave.getY() + (staveHeight + staveHeight), staveWidth) })
+                    numberStaveFa = 0;
+                }
                 sheet.fa[sheet.fa.length-1].stave.setContext(context).draw();
             }
         })
