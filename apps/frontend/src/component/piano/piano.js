@@ -66,17 +66,16 @@ const PianoMaster = (props) => {
 
     // Utilisez la fonction useMemo pour mémoriser le résultat de la fonction map()
     const pianoKeys = useMemo(() => {
-
-        return notation.map((element, index) => {
-            return (
-                <li key={index} className={element.name} onClick={() => {
-                    props.onAddNote(element.note, element.octave, "q"),
-                        // Seulement jouer le son si audioActivated est true
-                        audioActivated && new Audio('../dist/music/piano/' + `${element.note}${element.octave}.mp3`).play()
-                }}>
-                </li>
-            )
-        });
+            return notation.map((element, index) => {
+                return (
+                    <li key={index} className={element.name} onClick={() => {
+                        props.onAddNote(element.note, element.octave, "q"),
+                            // Seulement jouer le son si audioActivated est true
+                            audioActivated && new Audio('../dist/music/piano/' + `${element.note}${element.octave}.mp3`).play()
+                    }}>
+                    </li>
+                )
+            })
     }, [audioActivated]);
     // c = do, d = RÉ, e = MI, f = FA, g = SOL, a = LA , b = SI
 
@@ -96,19 +95,19 @@ const PianoMaster = (props) => {
 
     useEffect(() => {
         if (midiInput >= 0 && WebMidi.inputs[midiInput]) {
-            WebMidi.inputs[midiInput].addListener('noteon', (e => props.onWrite(e.note.name+'/'+e.note.octave)),{ channels: [1, 2, 3] });
+            WebMidi.inputs[midiInput].addListener('noteon', (e => props.onAddNote(e.note.name, e.note.octave,"q")),{ channels: [1, 2, 3] });
         }
     }, [midiInput]);
 
     return (
         <>
             {errorMessage && <div className="error">{errorMessage}</div>}
-            <label>Midi :</label><select onChange={(event) => setMidiInput(event.target.value)}>
+            <label>Midi :</label>
+            <select onChange={(event) => setMidiInput(event.target.value)}>
                 {midiAllInput}
             </select>
             <label>Son du piano</label>
-            <input type="checkbox" checked={audioActivated} onChange={(e) => setAudioActivated(e.target.checked)}
-            />
+            <input type="checkbox" checked={audioActivated} onChange={(e) => setAudioActivated(e.target.checked)} />
             
             <ul className="set" id="piano">
                 {pianoKeys}
