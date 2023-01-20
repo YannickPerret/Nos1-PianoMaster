@@ -1,7 +1,8 @@
 {
-  "name": "nos1-pianomaster",
-  "workspaces": [
-    "apps/backend",
-    "apps/frontend"
-  ]
+    "name" : "piano_master",
+    "workspaces" : [
+        "apps/backend",
+        "apps/frontend",
+        "packages/functions"
+    ]
 }
