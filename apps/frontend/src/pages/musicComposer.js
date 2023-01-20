@@ -79,13 +79,15 @@ const MusicComposer = () => {
     const setupPianoPartition = () => {
         
         let context = renderPianoPartition()
+        sheet.sol=[]
+        sheet.fa=[]
 
-        sheet.sol.push({ stave: new Stave(0, 0, 380)})
+        sheet.sol.push({ stave: new Stave(0, 0, 230)})
         sheet.sol[0].stave.addClef("treble");
         sheet.sol[0].stave.addTimeSignature('4/4');
         sheet.sol[0].stave.setContext(context).draw();
 
-        sheet.fa.push({ stave: new Stave(0, 100, 180)})
+        sheet.fa.push({ stave: new Stave(0, 100, 230)})
         sheet.fa[0].stave.addClef("bass");
         sheet.fa[0].stave.addTimeSignature('4/4');
         sheet.fa[0].stave.setContext(context).draw();
@@ -176,6 +178,8 @@ const MusicComposer = () => {
 
 // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
 useEffect(() => {
+    
+    setupPianoPartition()
     // Ajoutez un gestionnaire d'événement qui exécute la fonction showStave lorsque la taille de la fenêtre change
     window.addEventListener('resize', () => createPianoPartition());
 
