@@ -3,6 +3,7 @@ import Header from '../component/layout/header';
 import Menu from '../component/layout/menu';
 import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow";
 import PianoKeyboard from '../component/piano/piano';
+import { uuid, uuid } from '@cpnv/functions';
 
 const MusicComposer = () => {
     const [titleCompose, setTitleCompose] = useState('Titre par défaut')
@@ -23,6 +24,35 @@ const MusicComposer = () => {
     let rendererHeight = 1000;
     // Récupérez un objet VexFlow 
     const VF = Vex.Flow;
+
+    const sendDataToApi = (note, octave, duration) => {
+        const data = [{note}, {octave}, {duration}];
+
+        fetch('https://api.example.com/endpoint', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error));
+    }
+
+    const getDataFormApi = (_uuid) => {
+        const uuid = _uuid || uuid();
+
+        fetch(`https://api.example.com/notes?uuid=${uuid}`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(note => {
+                addNote(note.note, note.octave, note.duration)
+            });
+            console.log(notes);
+        })
+        .catch(error => console.error(error));
+    }
     
     const addNote = (note, octave, duration) => {
 
@@ -121,24 +151,16 @@ const MusicComposer = () => {
             sheet.sol[0].stave.addClef("treble");
             sheet.sol[0].stave.addTimeSignature('4/4');
             sheet.sol[0].stave.setContext(context).draw();
-    
             numberStaveSol++
     
             sheet.fa.push({ stave: new Stave(0, 100, 230)})
             sheet.fa[0].stave.addClef("bass");
             sheet.fa[0].stave.addTimeSignature('4/4');
             sheet.fa[0].stave.setContext(context).draw();
-    
             numberStaveFa++
         }
-
-        
-
-
         notes.sol.map((noteInAMeasure) => {
-
             Formatter.FormatAndDraw(context, sheet.sol[sheet.sol.length-1].stave, noteInAMeasure);
-
             if(noteInAMeasure.length > 3){
                 if (numberStaveSol < maxStaveInWindow) 
                 {
@@ -153,11 +175,8 @@ const MusicComposer = () => {
                 sheet.sol[sheet.sol.length-1].stave.setContext(context).draw();
             }
         })
-
         notes.fa.map((noteInAMeasure) => {
-
             Formatter.FormatAndDraw(context, sheet.fa[sheet.fa.length-1].stave, noteInAMeasure);
-
             if(noteInAMeasure.length > 3)
             {
                 if (numberStaveFa < maxStaveInWindow) 
