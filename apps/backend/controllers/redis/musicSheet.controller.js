@@ -2,6 +2,7 @@ import { redisClient } from "../../models/redis/index.js"
 
 export const get = async (req, res) => {
   try {
+    console.log(req)
     const uuid = req.params.uuid
     const sheet = await redisClient.get(uuid)
     res.send({ sheet })
