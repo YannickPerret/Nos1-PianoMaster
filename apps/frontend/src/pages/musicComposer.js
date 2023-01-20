@@ -3,7 +3,7 @@ import Header from '../component/layout/header';
 import Menu from '../component/layout/menu';
 import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow";
 import PianoKeyboard from '../component/piano/piano';
-import { uuid, uuid } from '@cpnv/functions';
+import { uuid } from '@cpnv/functions';
 
 const MusicComposer = () => {
     const [titleCompose, setTitleCompose] = useState('Titre par défaut')
@@ -46,6 +46,7 @@ const MusicComposer = () => {
         fetch(`https://api.example.com/notes?uuid=${uuid}`)
         .then(response => response.json())
         .then(data => {
+            const res = JSON.parse(data)
             data.forEach(note => {
                 addNote(note.note, note.octave, note.duration)
             });

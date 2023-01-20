@@ -1,2 +1,1 @@
-export * as uuid from 'uuidv4'
-
+export { v4 as uuid } from 'uuid'
