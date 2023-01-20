@@ -1,10 +1,10 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import noteRedisRoutes from './routes/redis/notes.routes.js'
-import noteMongoRoutes from './routes/mongo/notes.routes.js'
-import { mongoConnection } from './models/mongo/index.js'
-import { redisConnection } from './models/redis/index.js'
-import dotenv from 'dotenv'
+import express from "express"
+import bodyParser from "body-parser"
+import musicSheetRedisRoutes from "./routes/redis/musicSheet.routes.js"
+import noteMongoRoutes from "./routes/mongo/notes.routes.js"
+//import { mongoConnection } from "./models/mongo/index.js"
+import { redisConnection } from "./models/redis/index.js"
+import dotenv from "dotenv"
 
 dotenv.config()
 
@@ -13,11 +13,15 @@ const port = process.env.PORT || 3000
 
 app.use(bodyParser.json())
 
-mongoConnection()
-//redisConnection()
+//mongoConnection()
+redisConnection()
 
-noteRedisRoutes(app)
-noteMongoRoutes(app)
+app.get("/", (req, res) => {
+  res.send("foo")
+})
+
+musicSheetRedisRoutes(app)
+//noteMongoRoutes(app)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
