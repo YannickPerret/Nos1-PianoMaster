@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react"
 import Header from "../component/layout/header"
 import Menu from "../component/layout/menu"
+import { useParams } from "react-router-dom"
 import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow"
 import PianoKeyboard from "../component/piano/piano"
 import { uuid } from "@cpnv/functions"
 
 const MusicComposer = () => {
   const [titleCompose, setTitleCompose] = useState("Titre par défaut")
+  let { uuidCustom } = useParams();
 
   let sheet = {
     sol: undefined,
@@ -25,9 +27,10 @@ const MusicComposer = () => {
   // Récupérez un objet VexFlow
   const VF = Vex.Flow
 
-  const sendDataToApi = (_uuid = null) => {
+  const sendDataToApi = async () => {
     if (notes.sol.length > 0 || notes.fa.length > 0) {
-      const tempUuid = _uuid || uuid()
+      const tempUuid = uuidCustom || uuid()
+      uuidCustom = tempUuid
       const flatNotes = getNotesInfo(notes)
 
       console.log(tempUuid)
@@ -38,22 +41,24 @@ const MusicComposer = () => {
         },
         body: JSON.stringify({ sheet: flatNotes }),
       })
-        .then((data) => console.log(data))
+        .then((response) => response.json)
         .catch((error) => console.error(error))
     }
   }
 
-  const getDataFormApi = (_uuid = null) => {
-    const uuid = _uuid || uuid()
+  const getDataFormApi = async () => {
+    const uuid = uuidCustom;
 
-    fetch(`https://api.example.com/notes?uuid=${uuid}`)
+    fetch(`http://localhost:3000/temp/music-sheets/${uuid}`)
       .then((response) => response.json())
       .then((data) => {
+
         const res = JSON.parse(data)
+        console.log(res)
+
         data.forEach((note) => {
           addNote(note.note, note.octave, note.duration)
         })
-        console.log(notes)
       })
       .catch((error) => console.error(error))
   }
@@ -264,10 +269,10 @@ const MusicComposer = () => {
 
   // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
   useEffect(() => {
+    uuidCustom && getDataFormApi();
     setupPianoPartition()
     // Ajoutez un gestionnaire d'événement qui exécute la fonction showStave lorsque la taille de la fenêtre change
     window.addEventListener("resize", () => createPianoPartition())
-
     // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
     // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
     return () => {
@@ -276,7 +281,7 @@ const MusicComposer = () => {
         createPianoPartition()
       })
     }
-  }, []) // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
+  }, [uuidCustom]) // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
 
   return (
     <>
