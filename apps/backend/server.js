@@ -5,6 +5,7 @@ import musicSheetMongoRoutes from "./routes/mongo/musicSheet.routes.js"
 import { mongoConnection } from "./models/mongo/index.js"
 import { redisConnection } from "./models/redis/index.js"
 import dotenv from "dotenv"
+import cors from "cors"
 
 dotenv.config()
 
@@ -12,6 +13,7 @@ const app = express()
 const port = process.env.PORT || 3000
 
 app.use(bodyParser.json())
+app.use(cors())
 
 mongoConnection()
 redisConnection()

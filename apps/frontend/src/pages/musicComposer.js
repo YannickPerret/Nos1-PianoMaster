@@ -25,21 +25,25 @@ const MusicComposer = () => {
   // Récupérez un objet VexFlow
   const VF = Vex.Flow
 
-  const sendDataToApi = (note, octave, duration) => {
-    const data = [{ note }, { octave }, { duration }]
-    fetch("https://api.example.com/endpoint", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error))
+  const sendDataToApi = (_uuid = null) => {
+    if (notes.sol.length > 0 || notes.fa.length > 0) {
+      const tempUuid = _uuid || uuid()
+      const flatNotes = getNotesInfo(notes)
+
+      console.log(tempUuid)
+      fetch(`http://localhost:3000/temp/music-sheets/${tempUuid}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sheet: flatNotes }),
+      })
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error))
+    }
   }
 
-  const getDataFormApi = (_uuid) => {
+  const getDataFormApi = (_uuid = null) => {
     const uuid = _uuid || uuid()
 
     fetch(`https://api.example.com/notes?uuid=${uuid}`)
@@ -52,6 +56,52 @@ const MusicComposer = () => {
         console.log(notes)
       })
       .catch((error) => console.error(error))
+  }
+
+  const getNotesInfo = () => {
+    let notesInfo = {
+      sol: [],
+      fa: [],
+    }
+    notes.sol.forEach((solRow) => {
+      let solRowInfo = []
+      solRow.forEach((note) => {
+        if (note instanceof Vex.Flow.GhostNote) {
+          solRowInfo.push({
+            note: null,
+            octave: null,
+            duration: null,
+          })
+        } else if (!note.isRest()) {
+          solRowInfo.push({
+            note: note.getKeys()[0].split("/")[0],
+            octave: note.getKeys()[0].split("/")[1],
+            duration: note.getDuration(),
+          })
+        }
+      })
+      notesInfo.sol.push(solRowInfo)
+    })
+    notes.fa.forEach((faRow) => {
+      let faRowInfo = []
+      faRow.forEach((note) => {
+        if (note instanceof Vex.Flow.GhostNote) {
+          faRowInfo.push({
+            note: null,
+            octave: null,
+            duration: null,
+          })
+        } else if (!note.isRest()) {
+          faRowInfo.push({
+            note: note.getKeys()[0].split("/")[0],
+            octave: note.getKeys()[0].split("/")[1],
+            duration: note.getDuration(),
+          })
+        }
+      })
+      notesInfo.fa.push(faRowInfo)
+    })
+    return notesInfo
   }
 
   const addNote = (note, octave, duration) => {
@@ -208,6 +258,8 @@ const MusicComposer = () => {
         sheet.fa[sheet.fa.length - 1].stave.setContext(context).draw()
       }
     })
+
+    sendDataToApi()
   }
 
   // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
@@ -219,6 +271,7 @@ const MusicComposer = () => {
     // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
     // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
     return () => {
+      sendDataToApi()
       window.removeEventListener("resize", () => {
         createPianoPartition()
       })
