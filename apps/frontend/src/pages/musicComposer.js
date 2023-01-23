@@ -31,10 +31,11 @@ const MusicComposer = () => {
     if (notes.sol.length > 0 || notes.fa.length > 0) {
       const tempUuid = uuidCustom || uuid()
       uuidCustom = tempUuid
+
+      console.log(uuidCustom)
       const flatNotes = getNotesInfo(notes)
 
-      console.log(tempUuid)
-      fetch(`http://localhost:3000/temp/music-sheets/${tempUuid}`, {
+      await fetch(`http://localhost:3000/temp/music-sheets/${tempUuid}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,33 +50,42 @@ const MusicComposer = () => {
   const getDataFormApi = async () => {
     const uuid = uuidCustom;
 
-    fetch(`http://localhost:3000/temp/music-sheets/${uuid}`)
+    await fetch(`http://localhost:3000/temp/music-sheets/${uuid}`)
       .then((response) => response.json())
       .then((data) => {
 
-        const res = JSON.parse(data)
-        console.log(res)
+        console.log("all", data)
 
-        data.forEach((note) => {
-          addNote(note.note, note.octave, note.duration)
+        data.fa.map((stave) =>
+          stave.map(note => {
+            addNote(note.note, note.octave, note.duration)
+          })
+        )
+
+        data.sol.map((stave) => {
+          stave.map(note => {
+            addNote(note.note, note.octave, note.duration)
+          })
         })
       })
       .catch((error) => console.error(error))
   }
 
   const getNotesInfo = () => {
+
     let notesInfo = {
       sol: [],
       fa: [],
     }
+
     notes.sol.forEach((solRow) => {
       let solRowInfo = []
       solRow.forEach((note) => {
         if (note instanceof Vex.Flow.GhostNote) {
           solRowInfo.push({
             note: null,
-            octave: null,
-            duration: null,
+            octave: "4",
+            duration: 'q',
           })
         } else if (!note.isRest()) {
           solRowInfo.push({
@@ -93,8 +103,8 @@ const MusicComposer = () => {
         if (note instanceof Vex.Flow.GhostNote) {
           faRowInfo.push({
             note: null,
-            octave: null,
-            duration: null,
+            octave: "3",
+            duration: 'q',
           })
         } else if (!note.isRest()) {
           faRowInfo.push({
@@ -106,14 +116,20 @@ const MusicComposer = () => {
       })
       notesInfo.fa.push(faRowInfo)
     })
+
+    console.log(notesInfo)
     return notesInfo
   }
 
   const addNote = (note, octave, duration) => {
+    if (note === null) {
+      return
+    }
+
     let emptyGhostNote = new Vex.Flow.GhostNote({ duration: duration })
 
-    if (notes.sol.length === 0) notes.sol.push([])
-    if (notes.fa.length === 0) notes.fa.push([])
+    notes.sol.length === 0 && notes.sol.push([])
+    notes.fa.length === 0 && notes.fa.push([])
 
     if (notes.sol[notes.sol.length - 1].length >= 4) {
       notes.sol[notes.sol.length] = []
@@ -263,8 +279,6 @@ const MusicComposer = () => {
         sheet.fa[sheet.fa.length - 1].stave.setContext(context).draw()
       }
     })
-
-    sendDataToApi()
   }
 
   // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
@@ -276,7 +290,7 @@ const MusicComposer = () => {
     // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
     // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
     return () => {
-      sendDataToApi()
+      //sendDataToApi()
       window.removeEventListener("resize", () => {
         createPianoPartition()
       })
@@ -291,10 +305,13 @@ const MusicComposer = () => {
           <h2 contentEditable onChange={(e) => setTitleCompose(e.target.name)} suppressContentEditableWarning={true}>
             {titleCompose}
           </h2>
+          <p>Url temporaire de la partition : {uuidCustom}</p>
         </div>
 
         <div id="musicComposer__sheet" className="musicComposer__sheet"></div>
         <div className="musicComposer_piano">
+          <button onClick={(e => sendDataToApi())}>Sauvegarder temporairement</button>
+          <button onClick={(e => sendDataToApi())}>Sauvegarder en permanence</button>
           <PianoKeyboard onAddNote={addNote} />
         </div>
       </main>
