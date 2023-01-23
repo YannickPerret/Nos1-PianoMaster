@@ -1,8 +1,8 @@
 import express from "express"
 import bodyParser from "body-parser"
 import musicSheetRedisRoutes from "./routes/redis/musicSheet.routes.js"
-import noteMongoRoutes from "./routes/mongo/notes.routes.js"
-//import { mongoConnection } from "./models/mongo/index.js"
+import musicSheetMongoRoutes from "./routes/mongo/musicSheet.routes.js"
+import { mongoConnection } from "./models/mongo/index.js"
 import { redisConnection } from "./models/redis/index.js"
 import dotenv from "dotenv"
 
@@ -13,7 +13,7 @@ const port = process.env.PORT || 3000
 
 app.use(bodyParser.json())
 
-//mongoConnection()
+mongoConnection()
 redisConnection()
 
 app.get("/", (req, res) => {
@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 })
 
 musicSheetRedisRoutes(app)
-//noteMongoRoutes(app)
+musicSheetMongoRoutes(app)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

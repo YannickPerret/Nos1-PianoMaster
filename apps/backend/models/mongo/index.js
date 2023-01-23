@@ -1,18 +1,18 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import NoteSchema from './notes.model.js';
+import mongoose from "mongoose"
+import dotenv from "dotenv"
+import MusicSheetSchema from "./musicSheet.model.js"
 
-dotenv.config();
+dotenv.config()
 
-const Note = mongoose.model('Note', NoteSchema);
+const MusicSheet = mongoose.model("MusicSheet", MusicSheetSchema)
 
 const mongoConnection = async () => {
   try {
-    mongoose.set('strictQuery', true);
-    await mongoose.connect(process.env.DB_MONGO, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(process.env.DB_MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
+    console.log("Mongo connected !")
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
-};
+}
 
-export { mongoConnection, Note };
+export { mongoConnection, MusicSheet }
