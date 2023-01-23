@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Header from "../component/layout/header"
 import Menu from "../component/layout/menu"
-import { useParams } from "react-router-dom"
+import { useParams, redirect } from "react-router-dom"
 import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow"
 import PianoKeyboard from "../component/piano/piano"
 import { uuid } from "@cpnv/functions"
@@ -20,22 +20,33 @@ const MusicComposer = () => {
     fa: [],
   }
 
+  const urlTemp = 'http://localhost:3000/temp/music-sheets'
+  const url = 'http://localhost:3000/music-sheets'
+
   const staveWidth = 230
   const staveHeight = 120
 
-  let rendererHeight = 1000
+  const rendererHeight = 1000
   // Récupérez un objet VexFlow
   const VF = Vex.Flow
 
-  const sendDataToApi = async () => {
+  const seletRetrieveDataApi = () => {
+    if(getSheetFromRedis(uuidCustom))
+      console.log("tt")
+    else if(getSheetFromMango(uuidCustom))
+      console.log("lllll")
+    return false
+  }
+
+  const saveSheetToRedis = async () => {
     if (notes.sol.length > 0 || notes.fa.length > 0) {
-      const tempUuid = uuidCustom || uuid()
+      let tempUuid = uuidCustom || uuid()
       uuidCustom = tempUuid
 
       console.log(uuidCustom)
       const flatNotes = getNotesInfo(notes)
 
-      await fetch(`http://localhost:3000/temp/music-sheets/${tempUuid}`, {
+      await fetch(`${urlTemp}/${tempUuid}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,31 +55,86 @@ const MusicComposer = () => {
       })
         .then((response) => response.json)
         .catch((error) => console.error(error))
+
+        document.getElementById('urlParition').innerHTML = `Url de la partition temporaire : ${tempUuid}`
+        redirect(`/sheetComposer/${uuidCustom}`)
     }
   }
 
-  const getDataFormApi = async () => {
-    const uuid = uuidCustom;
+  const saveSheetToMango = async () => {
+    let tempUuid = uuidCustom || uuid()
+    const flatNotes = getNotesInfo(notes)
 
-    await fetch(`http://localhost:3000/temp/music-sheets/${uuid}`)
+    await fetch(`${url}/${tempUuid}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sheet: flatNotes }),
+    })
       .then((response) => response.json())
       .then((data) => {
+        document.getElementById('urlParition').innerHTML = `Url de la partition : ${data._id}`
+        redirect(`/sheetComposer/${uuidCustom}`)
 
-        console.log("all", data)
-
-        data.fa.map((stave) =>
-          stave.map(note => {
-            addNote(note.note, note.octave, note.duration)
-          })
-        )
-
-        data.sol.map((stave) => {
-          stave.map(note => {
-            addNote(note.note, note.octave, note.duration)
-          })
-        })
       })
       .catch((error) => console.error(error))
+  }
+
+  const getSheetFromMango = async () => {
+    await fetch(`${url}/${uuidCustom}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if(data)
+        {
+          data.sheet.fa.map((stave) =>
+            stave.map(note => {
+              addNote(note.note, note.octave, note.duration)
+            })
+          )
+
+          data.sheet.sol.map((stave) => {
+            stave.map(note => {
+              addNote(note.note, note.octave, note.duration)
+            })
+          })
+          return true
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+      return false
+  }
+
+  const getSheetFromRedis = async () => {
+    const uuid = uuidCustom;
+
+    await fetch(`${urlTemp}/${uuid}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+          if(data){
+            data.fa.map((stave) =>
+            stave.map(note => {
+              addNote(note.note, note.octave, note.duration)
+            })
+          )
+          data.sol.map((stave) => {
+            stave.map(note => {
+              addNote(note.note, note.octave, note.duration)
+            })
+          })
+          return true
+        }
+
+      })
+      .catch((error) => {
+        console.error(error)
+        getSheetFromMango();
+      })
+      return false
   }
 
   const getNotesInfo = () => {
@@ -116,8 +182,6 @@ const MusicComposer = () => {
       })
       notesInfo.fa.push(faRowInfo)
     })
-
-    console.log(notesInfo)
     return notesInfo
   }
 
@@ -283,14 +347,15 @@ const MusicComposer = () => {
 
   // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
   useEffect(() => {
-    uuidCustom && getDataFormApi();
+    uuidCustom && seletRetrieveDataApi();
+
     setupPianoPartition()
     // Ajoutez un gestionnaire d'événement qui exécute la fonction showStave lorsque la taille de la fenêtre change
     window.addEventListener("resize", () => createPianoPartition())
     // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
     // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
     return () => {
-      //sendDataToApi()
+      saveSheetToRedis(urlTemp)
       window.removeEventListener("resize", () => {
         createPianoPartition()
       })
@@ -305,13 +370,13 @@ const MusicComposer = () => {
           <h2 contentEditable onChange={(e) => setTitleCompose(e.target.name)} suppressContentEditableWarning={true}>
             {titleCompose}
           </h2>
-          <p>Url temporaire de la partition : {uuidCustom}</p>
+          <p id="urlParition">Url temporaire de la partition : {uuidCustom}</p>
         </div>
 
         <div id="musicComposer__sheet" className="musicComposer__sheet"></div>
         <div className="musicComposer_piano">
-          <button onClick={(e => sendDataToApi())}>Sauvegarder temporairement</button>
-          <button onClick={(e => sendDataToApi())}>Sauvegarder en permanence</button>
+          <button onClick={(() => saveSheetToRedis(urlTemp))}>Sauvegarder temporairement</button>
+          <button onClick={(() => saveSheetToMango(url))}>Sauvegarder en permanence</button>
           <PianoKeyboard onAddNote={addNote} />
         </div>
       </main>
