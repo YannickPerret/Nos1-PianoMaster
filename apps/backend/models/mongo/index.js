@@ -8,6 +8,7 @@ const MusicSheet = mongoose.model("MusicSheet", MusicSheetSchema)
 
 const mongoConnection = async () => {
   try {
+    mongoose.set("strictQuery", true)
     await mongoose.connect(process.env.DB_MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
     console.log("Mongo connected !")
   } catch (error) {
