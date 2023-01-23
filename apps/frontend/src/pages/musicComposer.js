@@ -4,7 +4,6 @@ import Menu from "../component/layout/menu"
 import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow"
 import PianoKeyboard from "../component/piano/piano"
 import { uuid } from "@cpnv/functions"
-import { stringify } from "flatted"
 
 const MusicComposer = () => {
   const [titleCompose, setTitleCompose] = useState("Titre par défaut")
@@ -30,14 +29,15 @@ const MusicComposer = () => {
     if (notes.sol.length > 0 || notes.fa.length > 0) {
       const tempUuid = _uuid || uuid()
       const flatNotes = getNotesInfo(notes)
+
+      console.log(tempUuid)
       fetch(`http://localhost:3000/temp/music-sheets/${tempUuid}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: `{"sheet":${JSON.stringify(flatNotes)}}`,
+        body: JSON.stringify({"sheet": flatNotes}),
       })
-        .then((response) => response.json())
         .then((data) => console.log(data))
         .catch((error) => console.error(error))
     }

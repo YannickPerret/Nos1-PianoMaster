@@ -11,7 +11,7 @@ const Menu = () => {
                     </Link>
                 </li>
                 <li className="navigation__mobile__list__link">
-                    <Link to="/musicSheetList">
+                    <Link to="/sheetComposer">
                         <img src="../images/piano.png" width="25" height="auto" />
                     </Link>
                 </li>
