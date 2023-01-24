@@ -9,6 +9,7 @@ import { uuid } from "@cpnv/functions"
 const MusicComposer = () => {
   const [titleCompose, setTitleCompose] = useState("Titre par défaut")
   let { uuidCustom } = useParams();
+  let uuidRedis
   let navigate = useNavigate();
 
   let sheet = {
@@ -32,9 +33,10 @@ const MusicComposer = () => {
   const VF = Vex.Flow
 
   const saveSheetToMango = async () => {
-    const flatNotes = getNotesInfo(notes)
+    //const flatNotes = getNotesInfo(notes)
 
-    await fetch(`${url}${uuidCustom}`, {
+    console.log(uuidRedis)
+    await fetch(`${url}${uuidRedis}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,8 +53,7 @@ const MusicComposer = () => {
   }
 
   const saveSheetToRedis = async () => {
-
-      uuidCustom = uuidCustom || uuid()
+      uuidCustom = uuid()
 
       const flatNotes = getNotesInfo(notes)
       await fetch(`${urlTemp}${uuidCustom}`, {
@@ -65,8 +66,10 @@ const MusicComposer = () => {
         .then((response) => response.json)
         .catch((error) => console.error(error))
 
-        document.getElementById('urlParition').innerHTML = `url de la partition temporaire : ${uuidCustom}`
-        navigate("/sheetComposer/" + uuidCustom, { replace: true })
+        uuidRedis = uuidCustom
+        console.log(uuidRedis)
+        document.getElementById('urlParition').innerHTML = `url de la partition temporaire : ${uuidRedis}`
+        navigate("/sheetComposer/" + uuidRedis, { replace: true })
   }
 
   const getSheetFromMango = async () => {
@@ -86,6 +89,7 @@ const MusicComposer = () => {
     await fetch(`${urlTemp}${uuidCustom}`)
       .then((response) => response.json())
       .then((data) => { 
+          uuidRedis = uuidCustom
           addNoteFromDb(data)
       })
       .catch((error) => {
@@ -96,7 +100,7 @@ const MusicComposer = () => {
   }
 
 
-  
+
   const getNotesInfo = () => {
 
     let notesInfo = {
@@ -345,7 +349,7 @@ const MusicComposer = () => {
     // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
     // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
     return () => {
-      saveSheetToRedis()
+      //saveSheetToRedis()
       window.removeEventListener("resize", () => {
         createPianoPartition()
       })
