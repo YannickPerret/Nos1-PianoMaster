@@ -53,6 +53,7 @@ const MusicComposer = () => {
   }
 
   const saveSheetToRedis = async () => {
+    console.log("kdfjosfhoshfo")
       uuidCustom = uuid()
 
       const flatNotes = getNotesInfo(notes)
@@ -153,7 +154,7 @@ const MusicComposer = () => {
     const emptyGhostNote = new Vex.Flow.GhostNote({ duration: 'q' })
     notes.fa = []
     notes.sol = []
-   await noteList.fa.map((stave) => {
+    noteList.fa.map((stave) => {
       notes.fa.push([])
       stave.map((_note) => {
         if(_note.note === null){
@@ -171,7 +172,7 @@ const MusicComposer = () => {
       })
     })
 
-   await noteList.sol.map((stave) => {
+   noteList.sol.map((stave) => {
       notes.sol.push([])
       stave.map((_note) => {
         if(_note.note === null){
