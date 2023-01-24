@@ -95,7 +95,9 @@ const PianoMaster = (props) => {
 
     useEffect(() => {
         if (midiInput >= 0 && WebMidi.inputs[midiInput]) {
-            WebMidi.inputs[midiInput].addListener('noteon', (e => props.onAddNote(e.note.name, e.note.octave,"q")),{ channels: [1, 2, 3] });
+            WebMidi.inputs[midiInput].addListener('noteon', (e => {
+                audioActivated && new Audio('../dist/music/piano/' + `${e.note.name.toLowerCase()}${e.note.octave}.mp3`).play() 
+                props.onAddNote(e.note.name, e.note.octave,"q")}),{ channels: [1, 2, 3] });
         }
     }, [midiInput]);
 
