@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Header from "../component/layout/header"
 import Menu from "../component/layout/menu"
-import { useParams, redirect } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { Vex, Stave, StaveNote, Formatter, Accidental } from "vexflow"
 import PianoKeyboard from "../component/piano/piano"
 import { uuid } from "@cpnv/functions"
@@ -9,6 +9,7 @@ import { uuid } from "@cpnv/functions"
 const MusicComposer = () => {
   const [titleCompose, setTitleCompose] = useState("Titre par défaut")
   let { uuidCustom } = useParams();
+  let navigate = useNavigate();
 
   let sheet = {
     sol: undefined,
@@ -20,8 +21,8 @@ const MusicComposer = () => {
     fa: [],
   }
 
-  const urlTemp = 'http://localhost:3000/temp/music-sheets'
-  const url = 'http://localhost:3000/music-sheets'
+  const urlTemp = 'http://localhost:3000/temp/music-sheets/'
+  const url = 'http://localhost:3000/music-sheets/'
 
   const staveWidth = 230
   const staveHeight = 120
@@ -30,23 +31,31 @@ const MusicComposer = () => {
   // Récupérez un objet VexFlow
   const VF = Vex.Flow
 
-  const seletRetrieveDataApi = () => {
-    if(getSheetFromRedis(uuidCustom))
-      console.log("tt")
-    else if(getSheetFromMango(uuidCustom))
-      console.log("lllll")
-    return false
+  const saveSheetToMango = async () => {
+    const flatNotes = getNotesInfo(notes)
+
+    await fetch(`${url}${uuidCustom}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      //body: JSON.stringify({ sheet: flatNotes }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        uuidCustom = data._id
+        document.getElementById('urlParition').innerHTML = "Url de la partition : "+uuidCustom
+        navigate("/sheetComposer/" + uuidCustom)
+      })
+      .catch((error) => console.error(error))
   }
 
   const saveSheetToRedis = async () => {
-    if (notes.sol.length > 0 || notes.fa.length > 0) {
-      let tempUuid = uuidCustom || uuid()
-      uuidCustom = tempUuid
 
-      console.log(uuidCustom)
+      uuidCustom = uuidCustom || uuid()
+
       const flatNotes = getNotesInfo(notes)
-
-      await fetch(`${urlTemp}/${tempUuid}`, {
+      await fetch(`${urlTemp}${uuidCustom}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,87 +65,38 @@ const MusicComposer = () => {
         .then((response) => response.json)
         .catch((error) => console.error(error))
 
-        document.getElementById('urlParition').innerHTML = `Url de la partition temporaire : ${tempUuid}`
-        redirect(`/sheetComposer/${uuidCustom}`)
-    }
-  }
-
-  const saveSheetToMango = async () => {
-    let tempUuid = uuidCustom || uuid()
-    const flatNotes = getNotesInfo(notes)
-
-    await fetch(`${url}/${tempUuid}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ sheet: flatNotes }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        document.getElementById('urlParition').innerHTML = `Url de la partition : ${data._id}`
-        redirect(`/sheetComposer/${uuidCustom}`)
-
-      })
-      .catch((error) => console.error(error))
+        document.getElementById('urlParition').innerHTML = `url de la partition temporaire : ${uuidCustom}`
+        navigate("/sheetComposer/" + uuidCustom, { replace: true })
   }
 
   const getSheetFromMango = async () => {
-    await fetch(`${url}/${uuidCustom}`)
+
+    await fetch(`${url}${uuidCustom}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
-        if(data)
-        {
-          data.sheet.fa.map((stave) =>
-            stave.map(note => {
-              addNote(note.note, note.octave, note.duration)
-            })
-          )
-
-          data.sheet.sol.map((stave) => {
-            stave.map(note => {
-              addNote(note.note, note.octave, note.duration)
-            })
-          })
-          return true
+        if(data.sheet.fa.length > 0 || data.sheet.sol.length > 0){
+          console.log(data.sheet)
+          addNoteFromDb(data.sheet)
         }
       })
-      .catch((error) => {
-        console.error(error)
-      })
-      return false
+      .catch(error => console.error(error))
   }
 
   const getSheetFromRedis = async () => {
-    const uuid = uuidCustom;
-
-    await fetch(`${urlTemp}/${uuid}`)
+    await fetch(`${urlTemp}${uuidCustom}`)
       .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-          if(data){
-            data.fa.map((stave) =>
-            stave.map(note => {
-              addNote(note.note, note.octave, note.duration)
-            })
-          )
-          data.sol.map((stave) => {
-            stave.map(note => {
-              addNote(note.note, note.octave, note.duration)
-            })
-          })
-          return true
-        }
-
+      .then((data) => { 
+          addNoteFromDb(data)
       })
       .catch((error) => {
+        getSheetFromMango()
+
         console.error(error)
-        getSheetFromMango();
       })
-      return false
   }
 
+
+  
   const getNotesInfo = () => {
 
     let notesInfo = {
@@ -150,7 +110,7 @@ const MusicComposer = () => {
         if (note instanceof Vex.Flow.GhostNote) {
           solRowInfo.push({
             note: null,
-            octave: "4",
+            octave: '4',
             duration: 'q',
           })
         } else if (!note.isRest()) {
@@ -169,7 +129,7 @@ const MusicComposer = () => {
         if (note instanceof Vex.Flow.GhostNote) {
           faRowInfo.push({
             note: null,
-            octave: "3",
+            octave: '3',
             duration: 'q',
           })
         } else if (!note.isRest()) {
@@ -185,12 +145,52 @@ const MusicComposer = () => {
     return notesInfo
   }
 
-  const addNote = (note, octave, duration) => {
-    if (note === null) {
-      return
-    }
+  const addNoteFromDb = async (noteList) => {
+    const emptyGhostNote = new Vex.Flow.GhostNote({ duration: 'q' })
+    notes.fa = []
+    notes.sol = []
+   await noteList.fa.map((stave) => {
+      notes.fa.push([])
+      stave.map((_note) => {
+        if(_note.note === null){
+          notes.fa[notes.fa.length-1].push(emptyGhostNote)
+        }
+        else
+        {
+          let noteTemps = new StaveNote({ clef: "bass", keys: [`${_note.note}/${_note.octave}`], duration: _note.duration })
+          if (_note.note.includes("#"))
+          {
+            noteTemps.addModifier(new Accidental("#"))
+          }
+          notes.fa[notes.fa.length-1].push(noteTemps)
+        }
+      })
+    })
 
-    let emptyGhostNote = new Vex.Flow.GhostNote({ duration: duration })
+   await noteList.sol.map((stave) => {
+      notes.sol.push([])
+      stave.map((_note) => {
+        if(_note.note === null){
+          notes.sol[notes.sol.length-1].push(emptyGhostNote)
+        }
+        else
+        {
+          let noteTemps = new StaveNote({ clef: "treble", keys: [`${_note.note}/${_note.octave}`], duration: _note.duration })
+          if (_note.note.includes("#"))
+          {
+            noteTemps.addModifier(new Accidental("#"))
+          }
+          notes.sol[notes.sol.length-1].push(noteTemps)
+        }
+      })
+    })  
+
+    console.log(notes)
+    createPianoPartition()
+  }
+
+  const addNote = (note, octave, duration) => {
+    const emptyGhostNote = new Vex.Flow.GhostNote({ duration: duration })
 
     notes.sol.length === 0 && notes.sol.push([])
     notes.fa.length === 0 && notes.fa.push([])
@@ -200,35 +200,26 @@ const MusicComposer = () => {
     }
     if (notes.fa[notes.fa.length - 1].length >= 4) {
       notes.fa[notes.fa.length] = []
-    }
+    }    
 
     if (octave >= 4) {
+      let noteSol = new StaveNote({ clef: "treble", keys: [`${note}/${octave}`], duration: duration })
       if (note.includes("#"))
-        notes.sol[notes.sol.length - 1].push(
-          new StaveNote({ clef: "treble", keys: [`${note}/${octave}`], duration: duration }).addModifier(
-            new Accidental("#")
-          )
-        )
-      else
-        notes.sol[notes.sol.length - 1].push(
-          new StaveNote({ clef: "treble", keys: [`${note}/${octave}`], duration: duration })
-        )
+        noteSol.addModifier(new Accidental("#"))
+      notes.sol[notes.sol.length - 1].push(noteSol)
       notes.fa[notes.fa.length - 1].push(emptyGhostNote)
+
     } else {
+      let noteFa = new StaveNote({ clef: "bass", keys: [`${note}/${octave}`], duration: duration })
       if (note.includes("#"))
-        notes.fa[notes.fa.length - 1].push(
-          new StaveNote({ clef: "bass", keys: [`${note}/${octave}`], duration: duration }).addModifier(
-            new Accidental("#")
-          )
-        )
-      else
-        notes.fa[notes.fa.length - 1].push(
-          new StaveNote({ clef: "bass", keys: [`${note}/${octave}`], duration: duration })
-        )
+        noteFa.addModifier(new Accidental("#"))
+      notes.fa[notes.fa.length - 1].push(noteFa)
       notes.sol[notes.sol.length - 1].push(emptyGhostNote)
     }
     createPianoPartition()
   }
+
+
 
   const renderPianoPartition = () => {
     // Définissez une variable pour stocker la largeur maximale de l'écran
@@ -347,20 +338,19 @@ const MusicComposer = () => {
 
   // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
   useEffect(() => {
-    uuidCustom && seletRetrieveDataApi();
+    uuidCustom ? getSheetFromRedis():setupPianoPartition()
 
-    setupPianoPartition()
     // Ajoutez un gestionnaire d'événement qui exécute la fonction showStave lorsque la taille de la fenêtre change
     window.addEventListener("resize", () => createPianoPartition())
     // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
     // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
     return () => {
-      saveSheetToRedis(urlTemp)
+      saveSheetToRedis()
       window.removeEventListener("resize", () => {
         createPianoPartition()
       })
     }
-  }, [uuidCustom]) // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
+  }, []) // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
 
   return (
     <>
@@ -370,13 +360,13 @@ const MusicComposer = () => {
           <h2 contentEditable onChange={(e) => setTitleCompose(e.target.name)} suppressContentEditableWarning={true}>
             {titleCompose}
           </h2>
-          <p id="urlParition">Url temporaire de la partition : {uuidCustom}</p>
+          <p id="urlParition">&nbsp;</p>
         </div>
 
         <div id="musicComposer__sheet" className="musicComposer__sheet"></div>
         <div className="musicComposer_piano">
-          <button onClick={(() => saveSheetToRedis(urlTemp))}>Sauvegarder temporairement</button>
-          <button onClick={(() => saveSheetToMango(url))}>Sauvegarder en permanence</button>
+          <button onClick={(() => saveSheetToRedis())}>Sauvegarder temporairement</button>
+          <button onClick={(() => saveSheetToMango())}>Sauvegarder en permanence</button>
           <PianoKeyboard onAddNote={addNote} />
         </div>
       </main>
