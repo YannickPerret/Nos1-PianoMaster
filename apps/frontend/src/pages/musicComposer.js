@@ -7,10 +7,11 @@ import PianoKeyboard from "../component/piano/piano"
 import { uuid } from "@cpnv/functions"
 
 const MusicComposer = () => {
-  const [titleCompose, setTitleCompose] = useState("Titre par défaut")
   let { uuidCustom } = useParams();
-  let uuidRedis
+  let uuidRedis, uuidMangos
+
   let navigate = useNavigate();
+  
 
   let sheet = {
     sol: undefined,
@@ -28,7 +29,7 @@ const MusicComposer = () => {
   const staveWidth = 230
   const staveHeight = 120
 
-  const rendererHeight = 1000
+  const rendererHeight = 720
   // Récupérez un objet VexFlow
   const VF = Vex.Flow
 
@@ -45,19 +46,18 @@ const MusicComposer = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        uuidCustom = data._id
-        document.getElementById('urlParition').innerHTML = "Url de la partition : "+uuidCustom
-        navigate("/sheetComposer/" + uuidCustom)
+        uuidMangos = data._id
+        document.getElementById('urlParition').innerHTML = "Url de la partition : "+uuidMangos
+        navigate("/sheetComposer/" + uuidMangos)
       })
       .catch((error) => console.error(error))
   }
 
   const saveSheetToRedis = async () => {
-    console.log("kdfjosfhoshfo")
-      uuidCustom = uuid()
+      uuidRedis =  uuidRedis || uuid()
 
       const flatNotes = getNotesInfo(notes)
-      await fetch(`${urlTemp}${uuidCustom}`, {
+      await fetch(`${urlTemp}${uuidRedis}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,9 +67,8 @@ const MusicComposer = () => {
         .then((response) => response.json)
         .catch((error) => console.error(error))
 
-        uuidRedis = uuidCustom
         console.log(uuidRedis)
-        document.getElementById('urlParition').innerHTML = `url de la partition temporaire : ${uuidRedis}`
+        document.getElementById('urlParitionTemp').innerHTML = `id de la partition: ${uuidRedis}`
         navigate("/sheetComposer/" + uuidRedis, { replace: true })
   }
 
@@ -80,10 +79,14 @@ const MusicComposer = () => {
       .then((data) => {
         if(data.sheet.fa.length > 0 || data.sheet.sol.length > 0){
           console.log(data.sheet)
+          uuidMangos = uuidCustom
           addNoteFromDb(data.sheet)
         }
       })
-      .catch(error => console.error(error))
+      .catch(error => {
+        uuidCustom = ''
+        console.error(error)
+      })
   }
 
   const getSheetFromRedis = async () => {
@@ -190,7 +193,6 @@ const MusicComposer = () => {
       })
     })  
 
-    console.log(notes)
     createPianoPartition()
   }
 
@@ -284,6 +286,7 @@ const MusicComposer = () => {
 
     const context = renderer.getContext()
     context.setFont("Arial", 20)
+
     if (sheet.sol.length === 0 && sheet.fa.length === 0) {
       sheet.sol.push({ stave: new Stave(0, 0, 230) })
       sheet.sol[0].stave.addClef("treble")
@@ -297,6 +300,9 @@ const MusicComposer = () => {
       sheet.fa[0].stave.setContext(context).draw()
       numberStaveFa++
     }
+
+    console.log(notes)
+
     notes.sol.map((noteInAMeasure) => {
       Formatter.FormatAndDraw(context, sheet.sol[sheet.sol.length - 1].stave, noteInAMeasure)
       if (noteInAMeasure.length > 3) {
@@ -318,6 +324,10 @@ const MusicComposer = () => {
         sheet.sol[sheet.sol.length - 1].stave.setContext(context).draw()
       }
     })
+
+
+
+    
     notes.fa.map((noteInAMeasure) => {
       Formatter.FormatAndDraw(context, sheet.fa[sheet.fa.length - 1].stave, noteInAMeasure)
       if (noteInAMeasure.length > 3) {
@@ -344,16 +354,20 @@ const MusicComposer = () => {
   // Utilisez la fonction useEffect pour ajouter un gestionnaire d'événement pour détecter les changements de la taille de la fenêtre
   useEffect(() => {
     uuidCustom ? getSheetFromRedis():setupPianoPartition()
-
     // Ajoutez un gestionnaire d'événement qui exécute la fonction showStave lorsque la taille de la fenêtre change
     window.addEventListener("resize", () => createPianoPartition())
+
+    const intervalId = setInterval(() => {
+      if(notes.fa.length > 0 || notes.sol.length > 0)
+        saveSheetToRedis();
+    }, 5000);
     // Retourne une fonction qui est exécutée lorsque l'effet est nettoyé (par exemple, lorsque le composant est démonté)
     // Cette fonction sert à nettoyer les gestionnaires d'événement ajoutés par l'effet
     return () => {
-      //saveSheetToRedis()
       window.removeEventListener("resize", () => {
         createPianoPartition()
       })
+      clearInterval(intervalId)
     }
   }, []) // Le deuxième argument de la fonction useEffect (ici un tableau vide) spécifie quand l'effet doit être exécuté
 
@@ -362,15 +376,12 @@ const MusicComposer = () => {
       <Header />
       <main className="musicComposer">
         <div className="musicComposer__title">
-          <h2 contentEditable onChange={(e) => setTitleCompose(e.target.name)} suppressContentEditableWarning={true}>
-            {titleCompose}
-          </h2>
+          <p id="urlParitionTemp">&nbsp;</p>
           <p id="urlParition">&nbsp;</p>
         </div>
 
         <div id="musicComposer__sheet" className="musicComposer__sheet"></div>
         <div className="musicComposer_piano">
-          <button onClick={(() => saveSheetToRedis())}>Sauvegarder temporairement</button>
           <button onClick={(() => saveSheetToMango())}>Sauvegarder en permanence</button>
           <PianoKeyboard onAddNote={addNote} />
         </div>

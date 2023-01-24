@@ -14,10 +14,10 @@
     }
 
     &__sheet{
-        display: block;
+        display: flex;
         height: 63%;
         overflow-y: scroll;
-        overflow-x: hidden;
+        //overflow-x: hidden;
         width: 100%;
     }
 
