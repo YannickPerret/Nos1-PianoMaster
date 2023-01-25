@@ -34,8 +34,6 @@ const MusicComposer = () => {
   const VF = Vex.Flow
 
   const saveSheetToMango = async () => {
-    //const flatNotes = getNotesInfo(notes)
-
     console.log(uuidRedis)
     if(uuidRedis){
       await fetch(`${url}${uuidRedis}`, {
@@ -74,7 +72,6 @@ const MusicComposer = () => {
         .then((response) => response.json)
         .catch((error) => console.error(error))
 
-        console.log(uuidRedis)
         document.getElementById('urlParitionTemp').innerHTML = `id de la partition: ${uuidRedis}`
         //navigate("/sheetComposer/" + uuidRedis, { replace: true })
   }
@@ -91,18 +88,17 @@ const MusicComposer = () => {
       })
       .catch(error => {
         uuidCustom = undefined
+        createPianoPartition()
         console.error(error)
       })
   }
 
   const getSheetFromRedis = async () => {
 
-    console.log("avant" ,uuidCustom)
     await fetch(`${urlTemp}${uuidCustom}`)
       .then((response) => response.json())
       .then((data) => {
           uuidRedis = uuidCustom
-          console.log("après", uuidRedis) 
 
           addNoteFromDb(data)
       })
