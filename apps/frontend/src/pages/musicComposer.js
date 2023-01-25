@@ -37,26 +37,33 @@ const MusicComposer = () => {
     //const flatNotes = getNotesInfo(notes)
 
     console.log(uuidRedis)
-    await fetch(`${url}${uuidRedis}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      //body: JSON.stringify({ sheet: flatNotes }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        uuidMangos = data._id
-        document.getElementById('urlParition').innerHTML = "Url de la partition : "+uuidMangos
-        navigate("/sheetComposer/" + uuidMangos)
+    if(uuidRedis){
+      await fetch(`${url}${uuidRedis}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        //body: JSON.stringify({ sheet: flatNotes }),
       })
-      .catch((error) => console.error(error))
+        .then((response) => response.json())
+        .then((data) => {
+          uuidMangos = data._id
+          document.getElementById('urlParition').innerHTML = "Url de la partition : "+uuidMangos
+          //navigate("/sheetComposer/" + uuidMangos)
+        })
+        .catch((error) => console.error(error))
+    }
+    else{
+      document.getElementById('urlParitionTemp').innerHTML = 'ID de Redis manquant'
+    }
+    
   }
 
   const saveSheetToRedis = async () => {
-      uuidRedis =  uuidRedis || uuid()
+      uuidRedis =  uuidRedis ? uuidRedis : uuid()
 
       const flatNotes = getNotesInfo(notes)
+
       await fetch(`${urlTemp}${uuidRedis}`, {
         method: "POST",
         headers: {
@@ -69,7 +76,7 @@ const MusicComposer = () => {
 
         console.log(uuidRedis)
         document.getElementById('urlParitionTemp').innerHTML = `id de la partition: ${uuidRedis}`
-        navigate("/sheetComposer/" + uuidRedis, { replace: true })
+        //navigate("/sheetComposer/" + uuidRedis, { replace: true })
   }
 
   const getSheetFromMango = async () => {
@@ -78,22 +85,25 @@ const MusicComposer = () => {
       .then((response) => response.json())
       .then((data) => {
         if(data.sheet.fa.length > 0 || data.sheet.sol.length > 0){
-          console.log(data.sheet)
           uuidMangos = uuidCustom
           addNoteFromDb(data.sheet)
         }
       })
       .catch(error => {
-        uuidCustom = ''
+        uuidCustom = undefined
         console.error(error)
       })
   }
 
   const getSheetFromRedis = async () => {
+
+    console.log("avant" ,uuidCustom)
     await fetch(`${urlTemp}${uuidCustom}`)
       .then((response) => response.json())
-      .then((data) => { 
+      .then((data) => {
           uuidRedis = uuidCustom
+          console.log("après", uuidRedis) 
+
           addNoteFromDb(data)
       })
       .catch((error) => {
