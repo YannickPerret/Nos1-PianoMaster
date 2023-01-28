@@ -71,7 +71,7 @@ const MusicComposer = () => {
       })
         .then((response) => response.json)
         .catch((error) => console.error(error))
-
+      console.log(uuidRedis)
         document.getElementById('urlParitionTemp').innerHTML = `id de la partition: ${uuidRedis}`
         //navigate("/sheetComposer/" + uuidRedis, { replace: true })
   }
